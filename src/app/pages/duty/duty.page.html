@@ -1,7 +1,106 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>值周</ion-title>
+    <ion-title>成都市xxx学校</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content> </ion-content>
+<ion-content>
+  <ion-grid class="container">
+    <ion-row>
+      <!-- left -->
+      <ion-col class="left" size="4" size-md="2">
+        <div>
+          <ion-list>
+            <ion-item>
+              <ion-label>{{ grade }}</ion-label>
+              <ion-select [(ngModel)]="grade" interface="popover">
+                <ion-select-option value="2015级">2015级</ion-select-option>
+                <ion-select-option value="2016级">2016级</ion-select-option>
+                <ion-select-option value="2017级">2017级</ion-select-option>
+                <ion-select-option value="2018级">2018级</ion-select-option>
+                <ion-select-option value="2019级">2019级</ion-select-option>
+                <ion-select-option value="2020级">2020级</ion-select-option>
+                <ion-select-option value="2021级">2021级</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+          <ion-list>
+            <ion-item *ngFor="let item of nums" button>
+              <ion-label>{{ item + 1 }} 班</ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
+      </ion-col>
+      <!-- right -->
+      <ion-col class="right" size="8">
+        <div>
+          <ion-grid>
+            <ion-row class="ion-padding">
+              <ion-col class="ion-text-center">序号 </ion-col>
+              <ion-col class="ion-text-center"> 扣分标准</ion-col>
+              <ion-col class="ion-text-center"> 扣分值 </ion-col>
+              <ion-col class="ion-text-center"> 快照 </ion-col>
+            </ion-row>
+          </ion-grid>
+          <ion-slides pager="true" [options]="slideOpts">
+            <ion-slide>
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
+                    <!-- deduction option list -->
+                    <ion-grid>
+                      <ion-row *ngFor="let item of nums2" class="ion-padding">
+                        <ion-col>
+                          {{ item + 1 }}
+                        </ion-col>
+                        <ion-col>
+                          <p class="rule-description ion-no-margin">
+                            教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗（建议每人扣0.2）
+                          </p>
+                        </ion-col>
+                        <ion-col>
+                          <ion-button
+                            class="operation-btn"
+                            color="light"
+                            (tap)="openSelectScoreModal()"
+                          >
+                            <ion-icon color="dark" name="create" size="large"> </ion-icon>
+                          </ion-button>
+                        </ion-col>
+                        <ion-col>
+                          <ion-button class="operation-btn" color="light">
+                            <ion-icon color="dark" size="large" name="camera"></ion-icon>
+                          </ion-button>
+                        </ion-col>
+                      </ion-row>
+                    </ion-grid>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-slide>
+            <ion-slide>
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
+                    <h1>Slide 2</h1>
+                    <ion-card>
+                      <ion-card-header>
+                        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
+                        <ion-card-title>Card Title</ion-card-title>
+                      </ion-card-header>
+
+                      <ion-card-content>
+                        Keep close to Nature's heart... and break clear away, once in awhile, and
+                        climb a mountain or spend a week in the woods. Wash your spirit clean.
+                      </ion-card-content>
+                    </ion-card>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-slide>
+          </ion-slides>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,23 @@
+.container {
+  --ion-grid-padding: 0;
+  height: 100%;
+}
+
+.camera-btn {
+  --background: var(--transparent);
+}
+
+.rule-description {
+  font-size: 0.8rem;
+}
+
+.operation-btn {
+  --box-shadow: unset;
+  padding-left: 0px;
+  padding-right: 0px;
+  --padding-start: 0;
+  --padding-end: 0;
+  --border-radius: 50%;
+  width: 54px;
+  height: 54px;
+}
