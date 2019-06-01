@@ -100,6 +100,13 @@
     "@angular-devkit/core" "7.3.9"
     rxjs "6.3.3"
 
+"@angular/animations@^7.2.2":
+  version "7.2.15"
+  resolved "https://registry.npmjs.org/@angular/animations/-/animations-7.2.15.tgz#980c1f523a79d4b7cb44508f57fba06f2e0872fa"
+  integrity sha512-8oBt3HLgd2+kyJHUgsd7OzKCCss67t2sch15XNoIWlOLfxclqU+EfFE6t/vCzpT8/+lpZS6LU9ZrTnb+UBj5jg==
+  dependencies:
+    tslib "^1.9.0"
+
 "@angular/cli@~7.3.8":
   version "7.3.9"
   resolved "https://registry.npm.taobao.org/@angular/cli/download/@angular/cli-7.3.9.tgz#0366b5a66654c1f02ab2f3a9f15ebde446d506a4"

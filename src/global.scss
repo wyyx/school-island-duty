@@ -15,8 +15,15 @@
 @import './styles/color.scss';
 @import './styles/layout.scss';
 @import './styles/typo.scss';
+@import './styles/util.scss';
 
-.sc-ion-modal-md-h {
-  --width: 80%;
-  --height: 400px;
+.select-score-popover .popover-content {
+  width: 90%;
+  max-width: 800px;
+}
+
+.select-duty-popover .popover-content {
+  height: 90%;
+  width: 90%;
+  max-width: 800px;
 }

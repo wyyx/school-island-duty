@@ -78,5 +78,22 @@
   --white: white;
   --black: black;
 
+  /** darkgrey **/
+  --ion-color-darkgrey: #424242;
+  --ion-color-darkgrey-rgb: 66, 66, 66;
+  --ion-color-darkgrey-contrast: #ffffff;
+  --ion-color-darkgrey-contrast-rgb: 255, 255, 255;
+  --ion-color-darkgrey-shade: #3a3a3a;
+  --ion-color-darkgrey-tint: #555555;
+
   --transparent: transparent;
+}
+
+.ion-color-darkgrey {
+  --ion-color-base: #424242;
+  --ion-color-base-rgb: 66, 66, 66;
+  --ion-color-contrast: #ffffff;
+  --ion-color-contrast-rgb: 255, 255, 255;
+  --ion-color-shade: #3a3a3a;
+  --ion-color-tint: #555555;
 }

@@ -1,0 +1,38 @@
+<div class="ion-padding">
+  <ion-list>
+    <ion-radio-group>
+      <ion-list-header>
+        <ion-label class="list-label">选择值周项</ion-label>
+      </ion-list-header>
+
+      <ion-item *ngFor="let chip of chips" lines="none">
+        <!-- deduction card -->
+        <ion-card class="card ion-padding">
+          <!-- card header -->
+          <ion-row class="pb-5 text-center">
+            <ion-col class="shrink target-head-col">
+              <div style="color: transparent">目标</div>
+            </ion-col>
+            <ion-col class="grow">
+              <div class="head-text">扣分标准</div>
+            </ion-col>
+          </ion-row>
+          <!-- card content -->
+          <ion-row class="ion-wrap">
+            <!-- index -->
+            <ion-col class="target-col shrink">
+              <div class="label">{{ chip.label }}</div>
+            </ion-col>
+            <!-- standard -->
+            <ion-col class="grow standard-col">
+              <p class="rule-description ion-no-margin">
+                {{ chip.rule }}
+              </p>
+            </ion-col>
+          </ion-row>
+        </ion-card>
+        <ion-radio slot="end" :value="chip.value"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
+  </ion-list>
+</div>

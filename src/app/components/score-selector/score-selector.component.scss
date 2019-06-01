@@ -1,0 +1,27 @@
+ion-fab-button {
+  width: 36px;
+  height: 36px;
+}
+
+.num-pad ion-col {
+  flex: 0 1;
+  padding: 5px;
+}
+
+.sum {
+  width: 64px;
+  font-size: 1.5rem;
+  white-space: nowrap;
+}
+
+.unit {
+  font-size: 1rem;
+}
+
+ion-row {
+  justify-content: center;
+}
+
+.math-sign {
+  font-size: 1.5rem;
+}

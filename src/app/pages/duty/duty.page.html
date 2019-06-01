@@ -1,134 +1,142 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>成都市xxx学校</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
   <ion-grid class="container">
     <ion-row>
       <!-- left -->
-      <ion-col class="left" size="4" size-md="2">
+      <ion-col class="left" size-lg="2" style="flex: 4 1 !important; max-width: unset !important;">
         <div>
           <ion-list>
-            <ion-item>
+            <ion-item (tap)="openSelectGrade($event)">
+              <ion-label>
+                {{ currentGradeName }}
+              </ion-label>
+              <ion-icon name="arrow-dropdown"></ion-icon>
+            </ion-item>
+            <ion-item [hidden]="true">
               <ion-label>{{ grade }}</ion-label>
-              <ion-select [(ngModel)]="grade" interface="popover">
-                <ion-select-option value="2015级">2015级</ion-select-option>
-                <ion-select-option value="2016级">2016级</ion-select-option>
-                <ion-select-option value="2017级">2017级</ion-select-option>
-                <ion-select-option value="2018级">2018级</ion-select-option>
-                <ion-select-option value="2019级">2019级</ion-select-option>
-                <ion-select-option value="2020级">2020级</ion-select-option>
-                <ion-select-option value="2021级">2021级</ion-select-option>
+              <ion-select
+                [(ngModel)]="grade"
+                (ionChange)="onGradeChange($event)"
+                interface="popover"
+                #gradeSelect
+              >
+                <ion-select-option *ngFor="let grade of grades" [value]="grade.value">
+                  {{ grade.label }}
+                </ion-select-option>
               </ion-select>
             </ion-item>
           </ion-list>
           <ion-list>
-            <ion-item *ngFor="let item of nums" button>
-              <ion-label>{{ item + 1 }} 班</ion-label>
-            </ion-item>
+            <ion-radio-group>
+              <ion-item *ngFor="let item of currentClasses" button>
+                <ion-label>{{ item.label }}</ion-label>
+                <ion-radio [value]="item.value"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
           </ion-list>
         </div>
       </ion-col>
       <!-- right -->
-      <ion-col class="right" size="8">
-        <div>
-          <ion-grid>
-            <ion-row class="ion-padding">
-              <ion-col class="ion-text-center">序号 </ion-col>
-              <ion-col class="ion-text-center"> 扣分标准</ion-col>
-              <ion-col class="ion-text-center"> 扣分值 </ion-col>
-              <ion-col class="ion-text-center"> 快照 </ion-col>
-            </ion-row>
-          </ion-grid>
-          <ion-slides pager="true" [options]="slideOpts">
-            <ion-slide>
-              <ion-grid>
-                <ion-row>
-                  <ion-col>
-                    <ion-grid>
-                      <ion-row *ngFor="let item of nums2" class="ion-padding-top">
-                        <ion-card class="ion-padding">
-                          <ion-row class="ion-wrap">
-                            <!-- index -->
-                            <ion-col class="shrink">
-                              {{ item + 1 }}
-                            </ion-col>
-                            <!-- standard -->
-                            <ion-col class="grow">
-                              <p class="rule-description ion-no-margin">
-                                教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗（建议每人扣0.2）
-                              </p>
-                            </ion-col>
-                            <!-- score -->
-                            <ion-col class="shrink">
-                              <ion-button
-                                class="operation-btn"
-                                color="light"
-                                (tap)="openSelectScorePopover()"
-                              >
-                                <ion-icon color="dark" name="create" size="large"> </ion-icon>
-                              </ion-button>
-                            </ion-col>
-                            <!-- take pictures -->
-                            <ion-col class="shrink">
-                              <ion-button class="operation-btn" color="light">
-                                <ion-icon color="dark" size="large" name="camera"></ion-icon>
-                              </ion-button>
-                            </ion-col>
-                          </ion-row>
-                        </ion-card>
-                      </ion-row>
-                    </ion-grid>
-                  </ion-col>
+      <ion-col class="right" style="flex: 8 1 !important; max-width: unset !important;">
+        <ion-grid>
+          <!-- chips -->
+          <ion-row>
+            <ion-col>
+              <ion-chip
+                class="clickable"
+                (tap)="toggleChip(chip)"
+                [color]="added(chip) ? 'primary' : 'medium'"
+                *ngFor="let chip of chips"
+              >
+                <ion-label>{{ chip.label }}</ion-label>
+                <ion-icon [name]="added(chip) ? 'remove' : 'add'"></ion-icon>
+              </ion-chip>
+            </ion-col>
+            <ion-col class="shrink">
+              <ion-fab-button color="transparent" (tap)="openSelectDutyPopover()">
+                <ion-icon color="darkgrey" name="eye"></ion-icon>
+              </ion-fab-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <!-- <ion-slides pager="true" [options]="slideOpts">
+          <ion-slide> -->
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-grid [@listAnim]="addedChips.length">
+                <ion-row *ngFor="let chip of addedChips" class="ion-padding-top">
+                  <!-- deduction card -->
+                  <ion-card class="card ion-padding">
+                    <!-- card header -->
+                    <ion-row class="pb-5 text-center">
+                      <ion-col class="shrink target-head-col">
+                        <div style="color: transparent">目标</div>
+                      </ion-col>
+                      <ion-col class="grow">
+                        <div class="head-text">扣分标准</div>
+                      </ion-col>
+                      <ion-col class="shrink score-head-col">
+                        <div class="head-text">分值</div>
+                      </ion-col>
+                      <ion-col class="shrink camera-head-col">
+                        <div class="head-text">快照</div>
+                      </ion-col>
+                    </ion-row>
+                    <!-- card content -->
+                    <ion-row class="ion-wrap">
+                      <!-- index -->
+                      <ion-col class="target-col shrink">
+                        <div class="label">{{ chip.label }}</div>
+                      </ion-col>
+                      <!-- standard -->
+                      <ion-col class="grow standard-col">
+                        <p class="rule-description ion-no-margin">
+                          {{ chip.rule }}
+                        </p>
+                      </ion-col>
+                      <!-- score -->
+                      <ion-col class="shrink">
+                        <div>
+                          <ion-button
+                            class="operation-btn"
+                            color="light"
+                            (tap)="openSelectScorePopover()"
+                          >
+                            <ion-icon color="darkgrey" name="create" size="large"> </ion-icon>
+                          </ion-button>
+                        </div>
+                        <div class="text-center p-10">0.0分</div>
+                      </ion-col>
+                      <!-- take pictures -->
+                      <ion-col class="shrink">
+                        <ion-button class="operation-btn" color="light">
+                          <ion-icon color="darkgrey" size="large" name="camera"></ion-icon>
+                        </ion-button>
+                      </ion-col>
+                    </ion-row>
+                  </ion-card>
                 </ion-row>
               </ion-grid>
-            </ion-slide>
-            <ion-slide>
-              <ion-grid>
-                <ion-row>
-                  <ion-col>
-                    <ion-grid>
-                      <ion-row *ngFor="let item of nums3" class="ion-padding-top">
-                        <ion-card class="ion-padding">
-                          <ion-row>
-                            <!-- index -->
-                            <ion-col class="shrink" size="1">
-                              {{ item + 6 }}
-                            </ion-col>
-                            <!-- standard -->
-                            <ion-col class="grow">
-                              <p class="rule-description ion-no-margin">
-                                教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗（建议每人扣0.2）
-                              </p>
-                            </ion-col>
-                            <!-- score -->
-                            <ion-col class="shrink">
-                              <ion-button
-                                class="operation-btn"
-                                color="light"
-                                (tap)="openSelectScorePopover()"
-                              >
-                                <ion-icon color="dark" name="create" size="large"> </ion-icon>
-                              </ion-button>
-                            </ion-col>
-                            <!-- take pictures -->
-                            <ion-col class="shrink">
-                              <ion-button class="operation-btn" color="light">
-                                <ion-icon color="dark" size="large" name="camera"></ion-icon>
-                              </ion-button>
-                            </ion-col>
-                          </ion-row>
-                        </ion-card>
-                      </ion-row>
-                    </ion-grid>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-slide>
-          </ion-slides>
-        </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <!-- </ion-slide>
+        </ion-slides> -->
+      </ion-col>
+    </ion-row>
+    <ion-row
+      *ngIf="addedChips.length > 0"
+      class="actions ion-padding text-center ion-justify-content-center"
+    >
+      <ion-col size="2" class="ion-padding-end">
+        <ion-button expand="block" color="light">
+          签字
+        </ion-button>
+      </ion-col>
+      <ion-col size="2" class="ion-padding-start">
+        <ion-button expand="block" color="primary" (tap)="submit()">
+          提交
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>

@@ -1,0 +1,54 @@
+<ion-row>
+  <!-- integer -->
+  <ion-col>
+    <ion-grid class="num-pad">
+      <ion-row class="ion-no-wrap" *ngFor="let outterItem of integerNums">
+        <ion-col *ngFor="let innerItem of outterItem">
+          <ion-fab-button
+            [color]="getIfIntegerSelected(innerItem) ? 'primary' : 'transparent'"
+            (tap)="setIntegerPart(innerItem)"
+          >
+            {{ innerItem }}
+          </ion-fab-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-col>
+  <!-- plus sign -->
+  <ion-col class="shrink">
+    <ion-row class="fill-height ion-justify-content-center ion-align-items-center">
+      <ion-col class="shrink math-sign">
+        +
+      </ion-col>
+    </ion-row>
+  </ion-col>
+  <!-- decimal -->
+  <ion-col>
+    <ion-grid class="num-pad">
+      <ion-row class="ion-no-wrap" *ngFor="let outterItem of decimalNums">
+        <ion-col *ngFor="let innerItem of outterItem">
+          <ion-fab-button
+            [color]="getIfDecimalSelected(innerItem) ? 'primary' : 'transparent'"
+            (tap)="setDecimalPart(innerItem)"
+          >
+            {{ innerItem }}
+          </ion-fab-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-col>
+  <!-- equal sign -->
+  <ion-col class="shrink">
+    <ion-row class="fill-height ion-justify-content-center ion-align-items-center">
+      <ion-col class="shrink math-sign">
+        =
+      </ion-col>
+    </ion-row>
+  </ion-col>
+  <!-- sum -->
+  <ion-col class="shrink ion-padding">
+    <ion-row class="fill-height ion-justify-content-center ion-align-items-center">
+      <ion-col class="sum"> {{ sum }} <span class="unit">分</span> </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>
