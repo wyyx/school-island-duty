@@ -5,3 +5,13 @@
 .fill-height {
   height: 100%;
 }
+
+.grow {
+  flex-grow: 1;
+  flex-shrink: 0;
+}
+
+.shrink {
+  flex-grow: 0;
+  flex-shrink: 1;
+}

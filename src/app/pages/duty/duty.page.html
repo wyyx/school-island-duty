@@ -47,31 +47,38 @@
               <ion-grid>
                 <ion-row>
                   <ion-col>
-                    <!-- deduction option list -->
                     <ion-grid>
-                      <ion-row *ngFor="let item of nums2" class="ion-padding">
-                        <ion-col>
-                          {{ item + 1 }}
-                        </ion-col>
-                        <ion-col>
-                          <p class="rule-description ion-no-margin">
-                            教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗（建议每人扣0.2）
-                          </p>
-                        </ion-col>
-                        <ion-col>
-                          <ion-button
-                            class="operation-btn"
-                            color="light"
-                            (tap)="openSelectScoreModal()"
-                          >
-                            <ion-icon color="dark" name="create" size="large"> </ion-icon>
-                          </ion-button>
-                        </ion-col>
-                        <ion-col>
-                          <ion-button class="operation-btn" color="light">
-                            <ion-icon color="dark" size="large" name="camera"></ion-icon>
-                          </ion-button>
-                        </ion-col>
+                      <ion-row *ngFor="let item of nums2" class="ion-padding-top">
+                        <ion-card class="ion-padding">
+                          <ion-row class="ion-wrap">
+                            <!-- index -->
+                            <ion-col class="shrink">
+                              {{ item + 1 }}
+                            </ion-col>
+                            <!-- standard -->
+                            <ion-col class="grow">
+                              <p class="rule-description ion-no-margin">
+                                教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗（建议每人扣0.2）
+                              </p>
+                            </ion-col>
+                            <!-- score -->
+                            <ion-col class="shrink">
+                              <ion-button
+                                class="operation-btn"
+                                color="light"
+                                (tap)="openSelectScorePopover()"
+                              >
+                                <ion-icon color="dark" name="create" size="large"> </ion-icon>
+                              </ion-button>
+                            </ion-col>
+                            <!-- take pictures -->
+                            <ion-col class="shrink">
+                              <ion-button class="operation-btn" color="light">
+                                <ion-icon color="dark" size="large" name="camera"></ion-icon>
+                              </ion-button>
+                            </ion-col>
+                          </ion-row>
+                        </ion-card>
                       </ion-row>
                     </ion-grid>
                   </ion-col>
@@ -82,18 +89,40 @@
               <ion-grid>
                 <ion-row>
                   <ion-col>
-                    <h1>Slide 2</h1>
-                    <ion-card>
-                      <ion-card-header>
-                        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-                        <ion-card-title>Card Title</ion-card-title>
-                      </ion-card-header>
-
-                      <ion-card-content>
-                        Keep close to Nature's heart... and break clear away, once in awhile, and
-                        climb a mountain or spend a week in the woods. Wash your spirit clean.
-                      </ion-card-content>
-                    </ion-card>
+                    <ion-grid>
+                      <ion-row *ngFor="let item of nums3" class="ion-padding-top">
+                        <ion-card class="ion-padding">
+                          <ion-row>
+                            <!-- index -->
+                            <ion-col class="shrink" size="1">
+                              {{ item + 6 }}
+                            </ion-col>
+                            <!-- standard -->
+                            <ion-col class="grow">
+                              <p class="rule-description ion-no-margin">
+                                教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗（建议每人扣0.2）
+                              </p>
+                            </ion-col>
+                            <!-- score -->
+                            <ion-col class="shrink">
+                              <ion-button
+                                class="operation-btn"
+                                color="light"
+                                (tap)="openSelectScorePopover()"
+                              >
+                                <ion-icon color="dark" name="create" size="large"> </ion-icon>
+                              </ion-button>
+                            </ion-col>
+                            <!-- take pictures -->
+                            <ion-col class="shrink">
+                              <ion-button class="operation-btn" color="light">
+                                <ion-icon color="dark" size="large" name="camera"></ion-icon>
+                              </ion-button>
+                            </ion-col>
+                          </ion-row>
+                        </ion-card>
+                      </ion-row>
+                    </ion-grid>
                   </ion-col>
                 </ion-row>
               </ion-grid>
