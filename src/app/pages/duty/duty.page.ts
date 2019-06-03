@@ -5,15 +5,10 @@ import { ModalService } from 'src/app/services/modal.service'
 import { PopoverService } from 'src/app/services/popover.service'
 import { range } from 'src/app/utils/number.util'
 import { IonSelect } from '@ionic/angular'
-import { grades, AClass } from 'src/app/configs/class.config'
 import { SelectDutyModalComponent } from 'src/app/components/select-duty-modal/select-duty-modal.component'
 import { ToastService } from 'src/app/services/toast.service'
-
-interface Chip {
-  label: string
-  rule: string
-  value: number
-}
+import { Chip, AClass } from 'src/app/models/duty.model'
+import { grades, chips } from 'src/app/configs/class.config'
 
 @Component({
   selector: 'app-duty',
@@ -37,50 +32,7 @@ export class DutyPage implements OnInit, AfterViewInit {
 
   addedChips: Chip[] = []
 
-  chips = [
-    {
-      label: '第 1 项',
-      rule:
-        '教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗教室持续井然，无打推、喧哗（建议每人扣0.2）',
-      value: 1
-    },
-    {
-      label: '第 2 项',
-      rule: '第2项规则，第2项规则，第2项规则，第2项规则，第2项规则，',
-      value: 2
-    },
-    {
-      label: '第 3 项',
-      rule: '第3项规则，第3项规则，第3项规则，第3项规则，第3项规则，第3项规则，第3项规则，',
-      value: 3
-    },
-    {
-      label: '第 4 项',
-      rule: '第4项规则，第4项规则，第4项规则，第4项规则，第4项规则，第4项规则',
-      value: 4
-    },
-    {
-      label: '第 5 项',
-      rule: '第5项规则，第5项规则，第5项规则，第5项规则，第5项规则，第5项规则',
-      value: 5
-    },
-    {
-      label: '第 6 项',
-      rule:
-        '第6项规则，第6项规则，第6项规则，第6项规则，第6项规则，第6项规则，第6项规则，第6项规则，第6项规则，第6项规则',
-      value: 6
-    },
-    {
-      label: '第 7 项',
-      rule: '第7项规则，第7项规则，第7项规则，第7项规则',
-      value: 7
-    },
-    {
-      label: '第 8 项',
-      rule: '第8项规则，第8项规则，第8项规则，第8项规则，第8项规则，第8项规则',
-      value: 8
-    }
-  ]
+  chips = chips
 
   slideOpts = {
     initialSlide: 0,
@@ -107,12 +59,12 @@ export class DutyPage implements OnInit, AfterViewInit {
     }
   }
 
-  added(chip: Chip) {
+  isAdded(chip: Chip) {
     return this.addedChips.filter(c => c.value === chip.value).length > 0
   }
 
   toggleChip(chip: Chip) {
-    if (this.added(chip)) {
+    if (this.isAdded(chip)) {
       this.addedChips = this.addedChips.filter(c => c.value !== chip.value)
     } else {
       this.addedChips.unshift(chip)
@@ -137,8 +89,35 @@ export class DutyPage implements OnInit, AfterViewInit {
     const popover = this.popoverService.openPopover({
       component: SelectDutyModalComponent,
       cssClass: 'select-duty-popover',
-      backdropDismiss: true
+
+      componentProps: {
+        chips: this.chips
+      },
+      backdropDismiss: false
     })
+
+    popover
+      .then(res => {
+        return res.onDidDismiss()
+      })
+      .then(popoverObj => {
+        const returnedChip: Chip = popoverObj.data
+
+        if (!returnedChip) {
+          return
+        }
+
+        if (this.isAdded(returnedChip)) {
+          this.toastService.showToast({
+            message: '您已经添加了此值周项',
+            duration: 2000,
+            showCloseButton: true,
+            closeButtonText: '关闭'
+          })
+        } else {
+          this.addedChips.unshift(returnedChip)
+        }
+      })
   }
 
   submit() {

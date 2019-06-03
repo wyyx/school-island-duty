@@ -16,4 +16,8 @@ export class PopoverService {
     popover.present()
     return popover
   }
+
+  close(data?: any) {
+    this.popoverController.dismiss(data)
+  }
 }

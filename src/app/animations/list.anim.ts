@@ -8,9 +8,6 @@ export const listAnim = trigger('listAnim', [
         style({
           transform: 'scale(0)',
           opacity: 0
-          // height: '0px',
-          // margin: '0px',
-          // 'z-index': 50
         }),
         stagger(100, [
           group([
@@ -19,8 +16,6 @@ export const listAnim = trigger('listAnim', [
               style({
                 transform: 'scale(1)',
                 opacity: 1
-                // height: '200px',
-                // 'margin-bottom': '36px'
               })
             )
           ])

@@ -44,16 +44,16 @@
               <ion-chip
                 class="clickable"
                 (tap)="toggleChip(chip)"
-                [color]="added(chip) ? 'primary' : 'medium'"
+                [color]="isAdded(chip) ? 'primary' : 'medium'"
                 *ngFor="let chip of chips"
               >
                 <ion-label>{{ chip.label }}</ion-label>
-                <ion-icon [name]="added(chip) ? 'remove' : 'add'"></ion-icon>
+                <ion-icon [name]="isAdded(chip) ? 'remove' : 'add'"></ion-icon>
               </ion-chip>
             </ion-col>
             <ion-col class="shrink">
               <ion-fab-button color="transparent" (tap)="openSelectDutyPopover()">
-                <ion-icon color="darkgrey" name="eye"></ion-icon>
+                <ion-icon color="darkgrey" name="add"></ion-icon>
               </ion-fab-button>
             </ion-col>
           </ion-row>

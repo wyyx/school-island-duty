@@ -30,3 +30,15 @@ ion-card {
 .list-label {
   font-size: 1rem;
 }
+
+.selected {
+  border: 1px solid #3880ff;
+  border-radius: 4px;
+}
+
+.actions {
+  display: flex;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+}

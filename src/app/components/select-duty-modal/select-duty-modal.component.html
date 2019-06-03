@@ -1,11 +1,16 @@
 <div class="ion-padding">
-  <ion-list>
-    <ion-radio-group>
-      <ion-list-header>
+  <ion-list class="ion-no-padding">
+    <ion-radio-group (ionChange)="onRadioChange($event)">
+      <ion-list-header class="ion-padding-bottom">
         <ion-label class="list-label">选择值周项</ion-label>
       </ion-list-header>
 
-      <ion-item *ngFor="let chip of chips" lines="none">
+      <ion-item
+        (tap)="select(chip)"
+        *ngFor="let chip of chips"
+        lines="none"
+        [ngClass]="{ selected: currentSelect === chip.value }"
+      >
         <!-- deduction card -->
         <ion-card class="card ion-padding">
           <!-- card header -->
@@ -31,8 +36,20 @@
             </ion-col>
           </ion-row>
         </ion-card>
-        <ion-radio slot="end" :value="chip.value"></ion-radio>
+        <ion-radio slot="end" [value]="chip.value"></ion-radio>
       </ion-item>
     </ion-radio-group>
   </ion-list>
+  <ion-row *ngIf="selectedChip" class="actions ion-padding text-center ion-justify-content-center">
+    <ion-col size="4" class="ion-padding-end">
+      <ion-button expand="block" color="light" (tap)="cancel()">
+        取消
+      </ion-button>
+    </ion-col>
+    <ion-col size="4" class="ion-padding-start">
+      <ion-button expand="block" color="primary" (tap)="ok()">
+        确认
+      </ion-button>
+    </ion-col>
+  </ion-row>
 </div>

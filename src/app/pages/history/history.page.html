@@ -1,1 +1,71 @@
-<ion-content> </ion-content>
+<ion-content>
+  <ion-card>
+    <ion-grid class="ion-padding">
+      <!-- header -->
+      <ion-row class="header text-center ion-padding ">
+        <ion-col>
+          时间
+        </ion-col>
+
+        <ion-col>
+          班级
+        </ion-col>
+
+        <ion-col>
+          扣分
+        </ion-col>
+
+        <ion-col>
+          描述
+        </ion-col>
+
+        <ion-col>
+          状态
+        </ion-col>
+        <div class="header-divider"></div>
+      </ion-row>
+
+      <ion-row *ngFor="let dutyHistory of dutyHistories" class="text-center ion-padding">
+        <ion-col>
+          <ion-row>
+            <ion-col>
+              <span class="time">
+                {{ getTime(dutyHistory.createdTime) }}
+              </span>
+            </ion-col>
+            <ion-col> {{ getDate(dutyHistory.createdTime) }} </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <ion-col>
+          {{ dutyHistory.class }}
+        </ion-col>
+
+        <ion-col>
+          {{ dutyHistory.score }}
+        </ion-col>
+
+        <ion-col>
+          <ion-row class="ion-wrap clickable" (tap)="openImgViewer(dutyHistory.description)">
+            <ion-col *ngFor="let img of dutyHistory.description" class="img-wrapper">
+              <img [src]="img" class="image" />
+            </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <ion-col>
+          {{ dutyHistory.status === 0 ? '未上传' : '已上传' }}
+        </ion-col>
+
+        <ion-item-divider> </ion-item-divider>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <div class="sliders-wrapper" *ngIf="showImgViewer" @slideScaleAnim>
+    <ion-slides class="sliders" pager="true" [options]="slideOpts">
+      <ion-slide *ngFor="let img of slideImgs" (tap)="tapSlideImg()">
+        <img [src]="img" class="slide-img" />
+      </ion-slide>
+    </ion-slides>
+  </div>
+</ion-content>
