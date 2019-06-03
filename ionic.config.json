@@ -1,5 +1,7 @@
 {
   "name": "school-island-duty",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
