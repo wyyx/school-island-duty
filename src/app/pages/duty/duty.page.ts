@@ -81,7 +81,7 @@ export class DutyPage implements OnInit, AfterViewInit {
     const popover = this.popoverService.openPopover({
       component: SelectScoreModalComponent,
       cssClass: 'select-score-popover',
-      backdropDismiss: true
+      backdropDismiss: false
     })
   }
 

@@ -126,14 +126,14 @@
     </ion-row>
     <ion-row
       *ngIf="addedChips.length > 0"
-      class="actions ion-padding text-center ion-justify-content-center"
+      class="actions ion-padding ion-justify-content-center ion-align-items-center"
     >
-      <ion-col size="2" class="ion-padding-end">
+      <ion-col size="3" class="ion-padding-end">
         <ion-button expand="block" color="light">
           签字
         </ion-button>
       </ion-col>
-      <ion-col size="2" class="ion-padding-start">
+      <ion-col size="3" class="ion-padding-start">
         <ion-button expand="block" color="primary" (tap)="submit()">
           提交
         </ion-button>

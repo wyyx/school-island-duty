@@ -6,7 +6,8 @@ const routes: Routes = [
   {
     path: 'check-device',
     loadChildren: './pages/check-device/check-device.module#CheckDevicePageModule'
-  }
+  },
+  { path: 'check-password', loadChildren: './pages/check-password/check-password.module#CheckPasswordPageModule' }
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })],

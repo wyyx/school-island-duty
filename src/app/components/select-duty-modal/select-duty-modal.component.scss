@@ -39,6 +39,7 @@ ion-card {
 .actions {
   display: flex;
   position: fixed;
-  bottom: 0px;
+  // bottom: 0px;
   width: 100%;
+  align-items: flex-end;
 }
