@@ -1,0 +1,14 @@
+{
+  "content": [
+    {
+      "changeScore": 0,
+      "checkName": "string",
+      "createTime": "2019-06-03T10:42:59.814Z",
+      "imageUrls": ["string"],
+      "remarks": "string"
+    }
+  ],
+  "errorCode": "string",
+  "errorMsg": "string",
+  "status": "string"
+}

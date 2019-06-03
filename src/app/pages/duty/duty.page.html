@@ -38,29 +38,6 @@
       <!-- right -->
       <ion-col class="right" style="flex: 8 1 !important; max-width: unset !important;">
         <ion-grid>
-          <!-- chips -->
-          <ion-row>
-            <ion-col>
-              <ion-chip
-                class="clickable"
-                (tap)="toggleChip(chip)"
-                [color]="isAdded(chip) ? 'primary' : 'medium'"
-                *ngFor="let chip of chips"
-              >
-                <ion-label>{{ chip.label }}</ion-label>
-                <ion-icon [name]="isAdded(chip) ? 'remove' : 'add'"></ion-icon>
-              </ion-chip>
-            </ion-col>
-            <ion-col class="shrink">
-              <ion-fab-button color="transparent" (tap)="openSelectDutyPopover()">
-                <ion-icon color="darkgrey" name="add"></ion-icon>
-              </ion-fab-button>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
-        <!-- <ion-slides pager="true" [options]="slideOpts">
-          <ion-slide> -->
-        <ion-grid>
           <ion-row>
             <ion-col>
               <ion-grid [@listAnim]="addedChips.length">
@@ -120,8 +97,6 @@
             </ion-col>
           </ion-row>
         </ion-grid>
-        <!-- </ion-slide>
-        </ion-slides> -->
       </ion-col>
     </ion-row>
     <ion-row
@@ -140,4 +115,10 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (tap)="openSelectDutyPopover()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

@@ -25,29 +25,29 @@
         <div class="header-divider"></div>
       </ion-row>
 
-      <ion-row *ngFor="let dutyHistory of dutyHistories" class="text-center ion-padding">
+      <ion-row *ngFor="let dutyHistory of dutyHistoryList" class="text-center ion-padding">
         <ion-col>
           <ion-row>
             <ion-col>
               <span class="time">
-                {{ getTime(dutyHistory.createdTime) }}
+                {{ getTime(dutyHistory.createTime) }}
               </span>
             </ion-col>
-            <ion-col> {{ getDate(dutyHistory.createdTime) }} </ion-col>
+            <ion-col> {{ getDate(dutyHistory.createTime) }} </ion-col>
           </ion-row>
         </ion-col>
 
         <ion-col>
-          {{ dutyHistory.class }}
+          {{ dutyHistory.className }}
         </ion-col>
 
         <ion-col>
-          {{ dutyHistory.score }}
+          {{ dutyHistory.changeScore }}
         </ion-col>
 
         <ion-col>
-          <ion-row class="ion-wrap clickable" (tap)="openImgViewer(dutyHistory.description)">
-            <ion-col *ngFor="let img of dutyHistory.description" class="img-wrapper">
+          <ion-row class="ion-wrap clickable" (tap)="openImgViewer(dutyHistory.describeList)">
+            <ion-col *ngFor="let img of dutyHistory.describeList" class="img-wrapper">
               <img [src]="img" class="image" />
             </ion-col>
           </ion-row>

@@ -1,51 +1,32 @@
-export interface DutyHistory {
-  createdTime: string
-  class: string
-  score: number
-  description: string[]
-  status: number
-}
+import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { Inject, Injectable } from '@angular/core'
+import { Observable } from 'rxjs'
+import { BASE_URL } from '../app.module'
+import { AddDutyResponse, GetDutyHistoryListResponse, NewDuty } from '../models/duty.model'
 
-export const dutyHistories: DutyHistory[] = [
-  {
-    createdTime: '2017-02-08 09:30:26',
-    class: '2017级6班',
-    score: 5.2,
-    description: [
-      'https://picsum.photos/id/906/600/900',
-      'https://picsum.photos/id/455/900/600',
-      'https://picsum.photos/id/678/600/900',
-      'https://picsum.photos/id/123/500/500',
-      'https://picsum.photos/id/809/1920/1080'
-    ],
-    status: 0
-  },
-  {
-    createdTime: '2017-02-08 15:25:26',
-    class: '2017级3班',
-    score: 5.2,
-    description: [
-      'https://picsum.photos/id/444/600/900',
-      'https://picsum.photos/id/456/600/900',
-      'https://picsum.photos/id/234/600/900',
-      'https://picsum.photos/id/789/600/900',
-      'https://picsum.photos/id/887/600/900'
-    ],
-    status: 0
-  },
-  {
-    createdTime: '2017-02-08 11:07:26',
-    class: '2018级1班',
-    score: 5.2,
-    description: [
-      'https://picsum.photos/id/345/600/900',
-      'https://picsum.photos/id/456/600/900',
-      'https://picsum.photos/id/445/600/900',
-      'https://picsum.photos/id/267/600/900',
-      'https://picsum.photos/id/999/600/900'
-    ],
-    status: 0
+@Injectable({
+  providedIn: 'root'
+})
+export class DutyService {
+  private headers = new HttpHeaders({
+    'Content-Type': 'application/json'
+  })
+
+  constructor(@Inject(BASE_URL) private baseUrl: string, private http: HttpClient) {}
+
+  add(duties: NewDuty[]): Observable<AddDutyResponse> {
+    const url = `${this.baseUrl}/w/score/add`
+
+    return this.http.post<AddDutyResponse>(url, duties, {
+      headers: this.headers
+    })
   }
-]
 
-export class DutyService {}
+  getDutyHistoryList(body: { classId: number; pageNo: number; pageSize: number }) {
+    const url = `${this.baseUrl}/w/score/list-page`
+
+    return this.http.post<GetDutyHistoryListResponse>(url, body, {
+      headers: this.headers
+    })
+  }
+}

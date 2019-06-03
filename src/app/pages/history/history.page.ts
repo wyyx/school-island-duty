@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core'
-import { DutyHistory, dutyHistories } from 'src/app/services/duty.service'
-
 import * as moment from 'moment'
 import { slideScaleAnim } from 'src/app/animations/slide-scale.anim'
+import { DutyHistory } from 'src/app/models/duty.model'
+import { DutyService } from 'src/app/services/duty.service'
+import { dutyHistoryList } from 'src/app/mocks/duty.mock'
+import { tap } from 'rxjs/operators'
+
 moment.locale('zh-CN')
 
 @Component({
@@ -12,7 +15,7 @@ moment.locale('zh-CN')
   animations: [slideScaleAnim]
 })
 export class HistoryPage implements OnInit {
-  dutyHistories: DutyHistory[]
+  dutyHistoryList: DutyHistory[]
   slideOpts = {
     initialSlide: 1,
     speed: 400
@@ -21,10 +24,24 @@ export class HistoryPage implements OnInit {
   slideImgs: string[] = []
   showImgViewer = false
 
-  constructor() {}
+  constructor(private dutyService: DutyService) {}
 
   ngOnInit() {
-    this.dutyHistories = dutyHistories
+    this.dutyHistoryList = dutyHistoryList
+  }
+
+  loadDutyHistoryList() {
+    this.dutyService
+      .getDutyHistoryList({
+        classId: 0,
+        pageNo: 0,
+        pageSize: 100
+      })
+      .pipe(
+        tap(res => {
+          this.dutyHistoryList = res.content
+        })
+      )
   }
 
   getTime(date: string) {
