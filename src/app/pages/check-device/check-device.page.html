@@ -2,8 +2,8 @@
   <ion-grid>
     <ion-row class="ion-justify-content-center ion-align-items-center">
       <ion-col size="10">
-        <ion-card>
-          <ion-row class="ion-nowrap ion-padding">
+        <ion-card class="ion-padding">
+          <ion-row class="ion-nowrap">
             <ion-col class="title-col">
               <h5 class="title">注册设备</h5>
             </ion-col>
@@ -14,7 +14,7 @@
             </ion-col>
           </ion-row>
 
-          <ion-card-content>
+          <ion-card-content class="ion-no-padding">
             <ion-item>
               <ion-label position="floating">设备ID</ion-label>
               <ion-input></ion-input>
@@ -33,7 +33,13 @@
             <div class="ion-text-center ion-padding-top">
               <ion-row class="ion-justify-content-center ion-align-items-center">
                 <ion-col size="3">
-                  <ion-button class="confirm-btn" color="primary" size="medium">确定</ion-button>
+                  <ion-button
+                    class="confirm-btn"
+                    color="primary"
+                    size="medium"
+                    (tap)="goToDutyPage()"
+                    >确定</ion-button
+                  >
                 </ion-col>
               </ion-row>
             </div>

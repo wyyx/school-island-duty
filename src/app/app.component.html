@@ -6,7 +6,9 @@
           <ion-title>成都市xxx学校</ion-title>
         </ion-col>
         <ion-col class="shrink ion-padding-end">
-          <ion-icon size="large" name="settings"> </ion-icon>
+          <ion-fab-button (tap)="goToCheckPasswordPage()" class="setting-btn" color="transparent">
+            <ion-icon size="large" name="settings"> </ion-icon>
+          </ion-fab-button>
         </ion-col>
       </ion-row>
     </ion-toolbar>
