@@ -40,16 +40,17 @@
       </ion-item>
     </ion-radio-group>
   </ion-list>
+
+  <ion-row class="actions ion-padding text-center ion-justify-content-center">
+    <ion-col size="4" class="ion-padding-end">
+      <ion-button expand="block" color="light" (tap)="cancel()">
+        取消
+      </ion-button>
+    </ion-col>
+    <ion-col size="4" class="ion-padding-start">
+      <ion-button expand="block" color="primary" (tap)="ok()">
+        确认
+      </ion-button>
+    </ion-col>
+  </ion-row>
 </div>
-<ion-row *ngIf="selectedChip" class="actions ion-padding text-center ion-justify-content-center">
-  <ion-col size="4" class="ion-padding-end">
-    <ion-button expand="block" color="light" (tap)="cancel()">
-      取消
-    </ion-button>
-  </ion-col>
-  <ion-col size="4" class="ion-padding-start">
-    <ion-button expand="block" color="primary" (tap)="ok()">
-      确认
-    </ion-button>
-  </ion-col>
-</ion-row>

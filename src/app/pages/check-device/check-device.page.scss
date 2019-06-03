@@ -7,20 +7,16 @@ ion-row {
   width: 100%;
 }
 
-.close-btn {
-  padding-left: 0px;
-  padding-right: 0px;
-  --padding-start: 0;
-  --padding-end: 0;
-  --border-radius: 50%;
-  width: 54px;
-  height: 54px;
-}
-
-.title {
+.title-col {
   flex: 1 1 auto;
 }
 
-ion-card-title {
-  line-height: 54px;
+.title {
+  margin: 0px;
+}
+
+.close-btn {
+  --box-shadow: 0px;
+  margin-top: -18px;
+  margin-right: -18px;
 }
