@@ -3,9 +3,15 @@ import { IonSelect } from '@ionic/angular'
 import { listAnim } from 'src/app/animations/list.anim'
 import { SelectScoreModalComponent } from 'src/app/components/select-score-modal/select-score-modal.component'
 import { deductionCategoryList, grades } from 'src/app/configs/class.config'
-import { AClass, DeductionCatetory, Grade } from 'src/app/models/duty.model'
+import {
+  AClass,
+  DeductionCatetoryModified,
+  DeductionModified,
+  Grade
+} from 'src/app/models/duty.model'
 import { PopoverService } from 'src/app/services/popover.service'
 import { ToastService } from 'src/app/services/toast.service'
+import { cloneDeep } from 'lodash'
 
 const SIZE_PRE_SLIDE = 5
 
@@ -18,13 +24,12 @@ const SIZE_PRE_SLIDE = 5
 export class DutyPage implements OnInit, AfterViewInit {
   @ViewChild('gradeSelect') gradeSelect: IonSelect
 
-  gradeValue: number
   grades = grades
-
   currentGrade: Grade = {} as Grade
   currentClass: AClass = {} as AClass
+  gradeValue: number
 
-  deductionCatogoryList: DeductionCatetory[] = []
+  deductionCatogoryListModified: DeductionCatetoryModified[] = []
 
   slideOpts = {
     initialSlide: 0,
@@ -73,15 +78,28 @@ export class DutyPage implements OnInit, AfterViewInit {
     this.currentClass = this.currentGrade.classes[0]
   }
 
-  openSelectScorePopover() {
-    const popover = this.popoverService.openPopover({
-      component: SelectScoreModalComponent,
-      cssClass: 'select-score-popover',
-      backdropDismiss: false
-    })
+  openSelectScorePopover(deductionOption: DeductionModified) {
+    const popover = this.popoverService
+      .openPopover({
+        component: SelectScoreModalComponent,
+        cssClass: 'select-score-popover',
+        backdropDismiss: false
+      })
+      .then(res => {
+        res.onDidDismiss().then(detail => {
+          const score = detail.data
+
+          // modify score
+          if (score && score !== 0) {
+            deductionOption.score = score
+          }
+        })
+      })
   }
 
-  submit() {
+  submit(option: DeductionModified) {
+    option.score = 0
+
     this.toastService
       .showToast({
         message: '您已经成功提交本次值周记录！',
@@ -94,7 +112,14 @@ export class DutyPage implements OnInit, AfterViewInit {
   }
 
   loadDeductionCategory() {
-    this.deductionCatogoryList = deductionCategoryList
+    this.deductionCatogoryListModified = deductionCategoryList.map(category => {
+      return {
+        ...category,
+        deductionOptions: category.deductionOptions.map(
+          option => ({ score: 0, imgUrls: [], deductionOption: option } as DeductionModified)
+        )
+      }
+    })
   }
 
   loadGrades() {

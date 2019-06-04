@@ -42,7 +42,7 @@
       <!-- right -->
       <ion-col class="right" style="max-width: unset !important;">
         <ion-slides pager="true" [options]="slideOpts" class="duty-slides">
-          <ion-slide *ngFor="let deductionCategory of deductionCatogoryList">
+          <ion-slide *ngFor="let category of deductionCatogoryListModified">
             <ion-grid class="ion-padding">
               <ion-row>
                 <ion-col>
@@ -53,7 +53,7 @@
                       </div>
                     </ion-col>
                     <ion-col class="text-center current-category">
-                      {{ deductionCategory.category }}
+                      {{ category.category }}
                     </ion-col>
                   </ion-row>
                 </ion-col>
@@ -73,22 +73,19 @@
                   <div class="head-text">快照</div>
                 </ion-col>
               </ion-row>
-              <ion-row
-                *ngFor="let deductionOption of deductionCategory.deductionOptions"
-                class="ion-padding-top"
-              >
+              <ion-row *ngFor="let option of category.deductionOptions" class="ion-padding-top">
                 <!-- deduction card -->
                 <ion-card class="card ion-padding">
                   <!-- card content -->
                   <ion-row class="ion-wrap">
                     <!-- index -->
                     <ion-col class="target-col shrink">
-                      <div class="label">{{ deductionOption.label }}</div>
+                      <div class="label">{{ option.deductionOption.label }}</div>
                     </ion-col>
                     <!-- standard -->
                     <ion-col class="grow standard-col">
                       <p class="rule-description ion-no-margin">
-                        {{ deductionOption.rule }}
+                        {{ option.deductionOption.rule }}
                       </p>
                     </ion-col>
                     <!-- score -->
@@ -97,17 +94,29 @@
                         <ion-button
                           class="operation-btn"
                           color="light"
-                          (tap)="openSelectScorePopover()"
+                          (tap)="openSelectScorePopover(option)"
                         >
                           <ion-icon color="darkgrey" name="create" size="large"> </ion-icon>
                         </ion-button>
                       </div>
-                      <div class="text-center p-10">0.0分</div>
+                      <div class="text-center p-10">{{ option.score ? option.score : 0 }} 分</div>
                     </ion-col>
                     <!-- take pictures -->
                     <ion-col class="shrink">
                       <ion-button class="operation-btn" color="light">
                         <ion-icon color="darkgrey" size="large" name="camera"></ion-icon>
+                      </ion-button>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row *ngIf="option.score !== 0" class="ion-justify-content-center">
+                    <ion-col size="4" style="padding: 0px;">
+                      <ion-button
+                        fill="outline"
+                        expand="block"
+                        color="primary"
+                        (tap)="submit(option)"
+                      >
+                        提交
                       </ion-button>
                     </ion-col>
                   </ion-row>
@@ -118,17 +127,5 @@
         </ion-slides>
       </ion-col>
     </ion-row>
-    <!-- <ion-row class="actions ion-padding ion-justify-content-center ion-align-items-center">
-      <ion-col size="3" class="ion-padding-end">
-        <ion-button expand="block" color="light">
-          签字
-        </ion-button>
-      </ion-col>
-      <ion-col size="3" class="ion-padding-start">
-        <ion-button expand="block" color="primary" (tap)="submit()">
-          提交
-        </ion-button>
-      </ion-col>
-    </ion-row> -->
   </ion-grid>
 </ion-content>

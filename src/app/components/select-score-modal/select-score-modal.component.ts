@@ -21,6 +21,6 @@ export class SelectScoreModalComponent implements OnInit {
   }
 
   onScoreChange(event) {
-    console.log('TCL: SelectScoreModalComponent -> ok -> event', event)
+    this.sum = event
   }
 }

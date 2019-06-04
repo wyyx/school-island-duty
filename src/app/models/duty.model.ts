@@ -2,10 +2,22 @@ export interface DeductionCatetory {
   category: string
   deductionOptions: DeducionOption[]
 }
+
+export interface DeductionCatetoryModified {
+  category: string
+  deductionOptions: DeductionModified[]
+}
+
 export interface DeducionOption {
   label: string
   rule: string
   value: number
+}
+
+export interface DeductionModified {
+  score: number
+  imgUrls: string[]
+  deductionOption: DeducionOption
 }
 
 export interface Grade {

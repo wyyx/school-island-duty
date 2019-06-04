@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter } from '@angular/core'
+import { Component, OnInit, EventEmitter, Output } from '@angular/core'
 
 @Component({
   selector: 'app-score-selector',
@@ -6,7 +6,7 @@ import { Component, OnInit, EventEmitter } from '@angular/core'
   styleUrls: ['./score-selector.component.scss']
 })
 export class ScoreSelectorComponent implements OnInit {
-  change: EventEmitter<number> = new EventEmitter()
+  @Output() change = new EventEmitter<number>()
 
   integerNums = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
   decimalNums = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6], [0.7, 0.8, 0.9]]
@@ -58,11 +58,6 @@ export class ScoreSelectorComponent implements OnInit {
     const temp = this.sum
 
     this.sum = this.selectedInteger + this.selectedDecimal
-
-    console.log(
-      'TCL: ScoreSelectorComponent -> caculateSum -> temp !== this.sum',
-      temp !== this.sum
-    )
 
     if (temp !== this.sum) {
       this.change.emit(this.sum)
