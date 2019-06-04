@@ -54,9 +54,22 @@
         </ion-col>
 
         <ion-col>
-          {{ dutyHistory.status === 0 ? '未上传' : '已上传' }}
+          <ng-container *ngIf="dutyHistory.status === 0; else elseTemplate">
+            <ion-button *ngIf="dutyHistory.status === 0" fill="clear">
+              <span style="padding-right: 5px;">
+                点击上传
+              </span>
+              <ion-icon
+                *ngIf="dutyHistory.status === 0"
+                size="large"
+                name="cloud-upload"
+              ></ion-icon>
+            </ion-button>
+          </ng-container>
+          <ng-template #elseTemplate>
+            已上传
+          </ng-template>
         </ion-col>
-
         <ion-item-divider> </ion-item-divider>
       </ion-row>
     </ion-grid>

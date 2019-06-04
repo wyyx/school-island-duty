@@ -1,4 +1,8 @@
-export interface Chip {
+export interface DeductionCatetory {
+  category: string
+  deductionOptions: DeducionOption[]
+}
+export interface DeducionOption {
   label: string
   rule: string
   value: number

@@ -60,7 +60,6 @@ ion-slides ion-card {
 
 .head-text {
   color: rgb(180, 180, 180);
-  // transform: translateY(0)
 }
 
 .actions {
@@ -68,4 +67,14 @@ ion-slides ion-card {
   position: fixed;
   bottom: 0px;
   width: 100%;
+  z-index: 2000;
+}
+
+.card {
+  width: 100%;
+}
+
+.swiper-pagination {
+  top: 0px !important;
+  bottom: unset !important;
 }

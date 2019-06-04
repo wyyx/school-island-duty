@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { Chip } from 'src/app/models/duty.model'
+import { DeducionOption } from 'src/app/models/duty.model'
 import { PopoverService } from 'src/app/services/popover.service'
 
 @Component({
@@ -10,7 +10,7 @@ import { PopoverService } from 'src/app/services/popover.service'
 export class SelectDutyModalComponent implements OnInit {
   chips
   currentSelect
-  selectedChip: Chip
+  selectedChip: DeducionOption
 
   constructor(private popoverService: PopoverService) {}
 
@@ -28,7 +28,7 @@ export class SelectDutyModalComponent implements OnInit {
     this.popoverService.close()
   }
 
-  select(chip: Chip) {
+  select(chip: DeducionOption) {
     this.selectedChip = chip
   }
 }
