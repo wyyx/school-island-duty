@@ -1,20 +1,20 @@
 <ion-content>
   <ion-grid class="container">
-    <ion-row>
+    <ion-row class="ion-nowrap">
       <!-- left -->
-      <ion-col class="left" size="4" size-lg="3" style="max-width: unset !important;">
+      <ion-col class="left shrink" style="max-width: unset !important;">
         <div>
           <ion-list>
-            <ion-item (tap)="openSelectGrade($event)">
-              <ion-label>
-                {{ currentGradeName }}
+            <ion-item (tap)="openSelectGrade($event)" button>
+              <ion-label class="pr-10">
+                {{ currentGrade.label }}
               </ion-label>
               <ion-icon name="arrow-dropdown"></ion-icon>
             </ion-item>
             <ion-item [hidden]="true">
-              <ion-label>{{ grade }}</ion-label>
+              <ion-label>{{ gradeValue }}</ion-label>
               <ion-select
-                [(ngModel)]="grade"
+                [(ngModel)]="gradeValue"
                 (ionChange)="onGradeChange($event)"
                 interface="popover"
                 #gradeSelect
@@ -26,25 +26,51 @@
             </ion-item>
           </ion-list>
           <ion-list>
-            <ion-radio-group>
-              <ion-item *ngFor="let item of currentClasses" button>
-                <ion-label>{{ item.label }}</ion-label>
-                <ion-radio [value]="item.value"></ion-radio>
-              </ion-item>
-            </ion-radio-group>
+            <ion-item
+              *ngFor="let aclass of currentGrade.classes"
+              [color]="currentClass.value === aclass.value ? 'primary' : ''"
+              button
+              (tap)="setClass(aclass)"
+              class="class-item"
+            >
+              <ion-label>{{ aclass.label }}</ion-label>
+              <ion-icon *ngIf="currentClass.value === aclass.value" name="checkmark"></ion-icon>
+            </ion-item>
           </ion-list>
         </div>
       </ion-col>
       <!-- right -->
-      <ion-col class="right" size="8" size-lg="9" style="max-width: unset !important;">
+      <ion-col class="right" style="max-width: unset !important;">
         <ion-slides pager="true" [options]="slideOpts" class="duty-slides">
           <ion-slide *ngFor="let deductionCategory of deductionCatogoryList">
             <ion-grid class="ion-padding">
               <ion-row>
                 <ion-col>
-                  <div>
-                    <h2>{{ deductionCategory.category }}</h2>
-                  </div>
+                  <ion-row class="category-and-fullname">
+                    <ion-col>
+                      <div *ngIf="currentClassFullName" class="current-class text-center">
+                        {{ currentClassFullName ? currentClassFullName : '没有选择班级' }}
+                      </div>
+                    </ion-col>
+                    <ion-col class="text-center current-category">
+                      {{ deductionCategory.category }}
+                    </ion-col>
+                  </ion-row>
+                </ion-col>
+              </ion-row>
+              <!-- deduction option header -->
+              <ion-row class="text-center ion-padding">
+                <ion-col class="shrink index-head-col">
+                  <div class="head-text">序号</div>
+                </ion-col>
+                <ion-col class="grow">
+                  <div class="head-text">扣分标准</div>
+                </ion-col>
+                <ion-col class="shrink score-head-col">
+                  <div class="head-text">分值</div>
+                </ion-col>
+                <ion-col class="shrink camera-head-col">
+                  <div class="head-text">快照</div>
                 </ion-col>
               </ion-row>
               <ion-row
@@ -53,21 +79,6 @@
               >
                 <!-- deduction card -->
                 <ion-card class="card ion-padding">
-                  <!-- card header -->
-                  <ion-row class="pb-5 text-center">
-                    <ion-col class="shrink target-head-col">
-                      <div style="color: transparent">目标</div>
-                    </ion-col>
-                    <ion-col class="grow">
-                      <div class="head-text">扣分标准</div>
-                    </ion-col>
-                    <ion-col class="shrink score-head-col">
-                      <div class="head-text">分值</div>
-                    </ion-col>
-                    <ion-col class="shrink camera-head-col">
-                      <div class="head-text">快照</div>
-                    </ion-col>
-                  </ion-row>
                   <!-- card content -->
                   <ion-row class="ion-wrap">
                     <!-- index -->
@@ -107,7 +118,7 @@
         </ion-slides>
       </ion-col>
     </ion-row>
-    <ion-row class="actions ion-padding ion-justify-content-center ion-align-items-center">
+    <!-- <ion-row class="actions ion-padding ion-justify-content-center ion-align-items-center">
       <ion-col size="3" class="ion-padding-end">
         <ion-button expand="block" color="light">
           签字
@@ -118,6 +129,6 @@
           提交
         </ion-button>
       </ion-col>
-    </ion-row>
+    </ion-row> -->
   </ion-grid>
 </ion-content>

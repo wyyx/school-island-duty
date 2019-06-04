@@ -54,12 +54,13 @@ ion-slides ion-card {
 }
 
 .score-head-col,
-.camera-head-col {
+.camera-head-col,
+.index-head-col {
   min-width: 68px;
 }
 
 .head-text {
-  color: rgb(180, 180, 180);
+  color: var(--ion-color-dark-tint);
 }
 
 .actions {
@@ -74,7 +75,7 @@ ion-slides ion-card {
   width: 100%;
 }
 
-.swiper-pagination {
-  top: 0px !important;
-  bottom: unset !important;
+.current-class,
+.current-category {
+  color: var(--ion-color-primary);
 }

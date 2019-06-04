@@ -29,7 +29,8 @@
 }
 
 .duty-slides .swiper-pagination {
-  text-align: center;
+  position: fixed;
   top: 0px !important;
   bottom: unset !important;
+  z-index: 3000;
 }
