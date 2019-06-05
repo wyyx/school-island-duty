@@ -14,6 +14,7 @@ import { ScoreSelectorComponent } from './components/score-selector/score-select
 import { SelectDutyModalComponent } from './components/select-duty-modal/select-duty-modal.component'
 import { environment } from 'src/environments/environment'
 import { HttpClientModule } from '@angular/common/http'
+import { IonicStorageModule } from '@ionic/storage'
 
 export const BASE_URL = new InjectionToken<string>('App base url')
 
@@ -29,6 +30,7 @@ export const BASE_URL = new InjectionToken<string>('App base url')
     BrowserModule,
     BrowserAnimationsModule,
     IonicModule.forRoot(),
+    IonicStorageModule.forRoot(),
     AppRoutingModule,
     HttpClientModule
   ],

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core'
-
-import { Platform } from '@ionic/angular'
+import { Router } from '@angular/router'
 import { SplashScreen } from '@ionic-native/splash-screen/ngx'
 import { StatusBar } from '@ionic-native/status-bar/ngx'
-import { Router } from '@angular/router'
+import { Platform } from '@ionic/angular'
+import { Storage } from '@ionic/storage'
 
 @Component({
   selector: 'app-root',
@@ -14,7 +14,8 @@ export class AppComponent {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private router: Router
+    private router: Router,
+    private storage: Storage
   ) {
     this.initializeApp()
   }

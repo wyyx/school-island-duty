@@ -338,6 +338,15 @@
   dependencies:
     ionicons "4.5.8"
 
+"@ionic/storage@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@ionic/storage/-/storage-2.2.0.tgz#ac181991d3bfc8352a5400efb5e9faa5e76b5d4b"
+  integrity sha512-2pszrzmI+fAar2Rx0WmJDVpc15D1k5tvLkB49NLYWJ2pOMaO/3/vp7mg/mEbg3rdsPE9FRbYI6vdKjQ2pP1EWA==
+  dependencies:
+    localforage "1.7.1"
+    localforage-cordovasqlitedriver "1.7.0"
+    tslib "^1.7.1"
+
 "@ngtools/webpack@7.3.9":
   version "7.3.9"
   resolved "https://registry.npm.taobao.org/@ngtools/webpack/download/@ngtools/webpack-7.3.9.tgz#db115dba8cc0886d8d822723be4119d3849fb4e3"
@@ -394,6 +403,13 @@
   dependencies:
     "@types/jasmine" "*"
 
+"@types/jquery@^3.3.29":
+  version "3.3.29"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.3.29.tgz#680a2219ce3c9250483722fccf5570d1e2d08abd"
+  integrity sha512-FhJvBninYD36v3k6c+bVk1DSZwh7B5Dpb/Pyk3HKVsiohn0nhbefZZ+3JXbWQhFyt0MxSl2jRDdGQPHeOHFXrQ==
+  dependencies:
+    "@types/sizzle" "*"
+
 "@types/lodash@^4.14.133":
   version "4.14.133"
   resolved "https://registry.npm.taobao.org/@types/lodash/download/@types/lodash-4.14.133.tgz#430721c96da22dd1694443e68e6cec7ba1c1003d"
@@ -413,6 +429,11 @@
   version "3.0.16"
   resolved "https://registry.npm.taobao.org/@types/selenium-webdriver/download/@types/selenium-webdriver-3.0.16.tgz#50a4755f8e33edacd9c406729e9b930d2451902a"
   integrity sha1-UKR1X44z7azZxAZynpuTDSRRkCo=
+
+"@types/sizzle@*":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.2.tgz#a811b8c18e2babab7d542b3365887ae2e4d9de47"
+  integrity sha512-7EJYyKTL7tFR8+gDbB6Wwz/arpGa0Mywk1TJbNzKzHtzbwVmY4HR9WqS5VV7dsBUKQmPNr192jHr/VpBluj/hg==
 
 "@types/source-list-map@*":
   version "0.1.2"
@@ -1861,6 +1882,18 @@ cordova-plugin-whitelist@^1.3.3:
   version "1.3.3"
   resolved "https://registry.npm.taobao.org/cordova-plugin-whitelist/download/cordova-plugin-whitelist-1.3.3.tgz#b5e85ecdbbfe5aeded40a1bf4ee2372e67d96fb4"
   integrity sha1-tehezbv+Wu3tQKG/TuI3LmfZb7Q=
+
+cordova-sqlite-storage-dependencies@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/cordova-sqlite-storage-dependencies/-/cordova-sqlite-storage-dependencies-2.0.0.tgz#a24e24d45b3b31e90217bc421db055497740265f"
+  integrity sha512-aYD5Cn1TJwgPmpZhQUYq4gOv5t+imzIxGo4SVa/fwEB/pLhiahi+2xK5gLd79YHrz6WdzFBr/126UPXhlSqRWA==
+
+cordova-sqlite-storage@3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/cordova-sqlite-storage/-/cordova-sqlite-storage-3.2.0.tgz#ef7c71c4de076b99b6e872d9f0a388656bf7f843"
+  integrity sha512-++qDuswavJ6k9zvoG2rAGmkvvzBO0sUWwh2Ccs64/Fj+CV8pmED76crq3/Lj2myDFqwuJ1LnMIlmXIlb5dAaxg==
+  dependencies:
+    cordova-sqlite-storage-dependencies "2.0.0"
 
 core-js@^2.2.0, core-js@^2.4.0, core-js@^2.5.4:
   version "2.6.9"
@@ -3900,6 +3933,11 @@ jasminewd2@^2.1.0:
   resolved "https://registry.npm.taobao.org/jasminewd2/download/jasminewd2-2.2.0.tgz#e37cf0b17f199cce23bea71b2039395246b4ec4e"
   integrity sha1-43zwsX8ZnM4jvqcbIDk5Uka07E4=
 
+jquery@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
+  integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
+
 js-base64@^2.1.8:
   version "2.5.1"
   resolved "https://registry.npm.taobao.org/js-base64/download/js-base64-2.5.1.tgz#1efa39ef2c5f7980bb1784ade4a8af2de3291121"
@@ -4156,6 +4194,13 @@ license-webpack-plugin@2.1.0:
     "@types/webpack-sources" "^0.1.5"
     webpack-sources "^1.2.0"
 
+lie@3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/lie/-/lie-3.1.1.tgz#9a436b2cc7746ca59de7a41fa469b3efb76bd87e"
+  integrity sha1-mkNrLMd0bKWd56QfpGmz77dr2H4=
+  dependencies:
+    immediate "~3.0.5"
+
 lie@~3.3.0:
   version "3.3.0"
   resolved "https://registry.npm.taobao.org/lie/download/lie-3.3.0.tgz#dcf82dee545f46074daf200c7c1c5a08e0f40f6a"
@@ -4197,6 +4242,27 @@ loader-utils@1.2.3, loader-utils@^1.0.1, loader-utils@^1.0.2, loader-utils@^1.1.
     big.js "^5.2.2"
     emojis-list "^2.0.0"
     json5 "^1.0.1"
+
+localforage-cordovasqlitedriver@1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/localforage-cordovasqlitedriver/-/localforage-cordovasqlitedriver-1.7.0.tgz#8b93957759ee688d3a58d5ba7c0477f6ccb53838"
+  integrity sha1-i5OVd1nuaI06WNW6fAR39sy1ODg=
+  dependencies:
+    localforage ">=1.5.0"
+
+localforage@1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/localforage/-/localforage-1.7.1.tgz#e4927e042302b864db30f3211f13b5c6f0de965d"
+  integrity sha1-5JJ+BCMCuGTbMPMhHxO1xvDell0=
+  dependencies:
+    lie "3.1.1"
+
+localforage@>=1.5.0:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/localforage/-/localforage-1.7.3.tgz#0082b3ca9734679e1bd534995bdd3b24cf10f204"
+  integrity sha512-1TulyYfc4udS7ECSBT2vwJksWbkwwTX8BzeUIiq8Y07Riy7bDAAnxDaPU/tWyOVmQAcWJIEIFP9lPfBGqVoPgQ==
+  dependencies:
+    lie "3.1.1"
 
 locate-path@^2.0.0:
   version "2.0.0"
@@ -7005,7 +7071,7 @@ ts-node@~8.1.0:
     source-map-support "^0.5.6"
     yn "^3.0.0"
 
-tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
+tslib@^1.7.1, tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   version "1.9.3"
   resolved "https://registry.npm.taobao.org/tslib/download/tslib-1.9.3.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftslib%2Fdownload%2Ftslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
   integrity sha1-1+TdeSRdhUKMTX5IIqeZF5VMooY=
