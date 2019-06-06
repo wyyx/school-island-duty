@@ -13,6 +13,8 @@ import { PopoverService } from 'src/app/services/popover.service'
 import { ToastService } from 'src/app/services/toast.service'
 import { dbService } from 'src/app/storage/db.service'
 import { convertToArray } from 'src/app/utils/sql.util'
+import { Observable, from } from 'rxjs'
+import { tap } from 'rxjs/operators'
 
 const SIZE_PRE_SLIDE = 5
 
@@ -32,6 +34,8 @@ export class DutyPage implements OnInit, AfterViewInit {
   currentSubItemScoreHistoryList: SubItemScoreHistory[]
 
   deductionCatogoryListModified: DeductionCatetoryModified[] = []
+
+  subItemScoreHistory$: Observable<SubItemScoreHistory[]>
 
   slideOpts = {
     initialSlide: 0,
@@ -64,6 +68,15 @@ export class DutyPage implements OnInit, AfterViewInit {
   ngOnInit() {
     this.loadGrades()
     this.loadDeductionCategory()
+
+    this.getSubItemScoreHistory()
+    this.subItemScoreHistory$
+      .pipe(
+        tap(resTap => {
+          console.log('TCL: HistoryPage -> ngOnInit -> res mmmmmmm', resTap)
+        })
+      )
+      .subscribe()
   }
 
   setInitData() {
@@ -81,6 +94,10 @@ export class DutyPage implements OnInit, AfterViewInit {
 
   setFirstClass() {
     this.currentClass = this.currentGrade.classes[0]
+  }
+
+  getSubItemScoreHistory() {
+    this.subItemScoreHistory$ = from(dbService.subItemScoreHistory(1))
   }
 
   openSelectScorePopover(deductionOption: DeductionModified) {
@@ -103,9 +120,6 @@ export class DutyPage implements OnInit, AfterViewInit {
   }
 
   submit(category: DeductionCatetoryModified, option: DeductionModified) {
-    console.log('TCL: DutyPage -> submit -> option', option)
-    console.log('TCL: DutyPage -> submit -> category', category)
-
     const data: DeductionPost = {
       autograph: '',
       checkSub: [
@@ -155,11 +169,7 @@ export class DutyPage implements OnInit, AfterViewInit {
 
   loadDeductionCategory() {
     dbService.allItemList().then(itemList => {
-      console.log('TCL: DutyPage -> loadDeductionCategory -> itemList', itemList)
-
       this.deductionCatogoryListModified = itemList.map(item => {
-        console.log('TCL: DutyPage -> loadDeductionCategory -> item xxxxxxxxxxxxxxxxxx', item)
-
         return {
           id: item.item.duty_check_item_config_id,
           category: item.item.check_name,
@@ -212,6 +222,5 @@ export class DutyPage implements OnInit, AfterViewInit {
 
   setClass(aclass: AClassVo) {
     this.currentClass = aclass
-    // dbService.subItemScoreHistory()
   }
 }

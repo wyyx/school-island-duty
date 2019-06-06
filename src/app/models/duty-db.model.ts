@@ -67,6 +67,8 @@ export interface DutyHistoryItem {
   create_time: string
   update_time: string
   deleted: number
+  change_score: number
+  status: number
 }
 
 export interface SubItemScoreHistory {

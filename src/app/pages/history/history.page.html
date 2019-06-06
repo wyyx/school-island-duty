@@ -1,5 +1,5 @@
 <ion-content>
-  <ion-card>
+  <ion-card [hidden]="showImgViewer">
     <ion-grid class="ion-padding">
       <!-- header -->
       <ion-row class="header text-center ion-padding ">
@@ -21,6 +21,12 @@
 
         <ion-col>
           状态
+          <ion-button (tap)="syncDb()">
+            <span style="padding-right: 5px;">
+              点击上传
+            </span>
+            <ion-icon size="large" name="cloud-upload"></ion-icon>
+          </ion-button>
         </ion-col>
         <div class="header-divider"></div>
       </ion-row>
@@ -30,24 +36,24 @@
           <ion-row>
             <ion-col>
               <span class="time">
-                {{ getTime(dutyHistory.createTime) }}
+                {{ getTime(dutyHistory.create_time) }}
               </span>
             </ion-col>
-            <ion-col> {{ getDate(dutyHistory.createTime) }} </ion-col>
+            <ion-col> {{ getDate(dutyHistory.create_time) }} </ion-col>
           </ion-row>
         </ion-col>
 
         <ion-col>
-          {{ dutyHistory.className }}
+          {{ dutyHistory.class_name }}
         </ion-col>
 
         <ion-col>
-          {{ dutyHistory.changeScore }}
+          {{ dutyHistory.change_score }}
         </ion-col>
 
         <ion-col>
-          <ion-row class="ion-wrap clickable" (tap)="openImgViewer(dutyHistory.describeList)">
-            <ion-col *ngFor="let img of dutyHistory.describeList" class="img-wrapper">
+          <ion-row class="ion-wrap clickable" (tap)="openImgViewer(dutyHistory.media_address)">
+            <ion-col *ngFor="let img of dutyHistory.media_address" class="img-wrapper">
               <img [src]="img" class="image" />
             </ion-col>
           </ion-row>
@@ -55,19 +61,10 @@
 
         <ion-col>
           <ng-container *ngIf="dutyHistory.status === 0; else elseTemplate">
-            <ion-button *ngIf="dutyHistory.status === 0" fill="clear">
-              <span style="padding-right: 5px;">
-                点击上传
-              </span>
-              <ion-icon
-                *ngIf="dutyHistory.status === 0"
-                size="large"
-                name="cloud-upload"
-              ></ion-icon>
-            </ion-button>
+            <span class="success-text">已上传</span>
           </ng-container>
           <ng-template #elseTemplate>
-            已上传
+            <span class="danger-text">未上传</span>
           </ng-template>
         </ion-col>
         <ion-item-divider> </ion-item-divider>

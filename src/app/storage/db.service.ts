@@ -115,7 +115,7 @@ export class DbService {
    * 同步数据，获取本校的年级，班级，检查项等初始数据
    * 参数：无
    */
-  synchronizationDate() {
+  synchronizationData() {
     // 同步数据
 
     db.transaction(
@@ -238,8 +238,6 @@ export class DbService {
             if (grade == null) {
               return
             }
-
-            console.log(grade)
 
             resolve(grade)
           })
@@ -417,47 +415,76 @@ export class DbService {
     })
   }
 
-  subItemScoreHistory(ItemId: number, classId: number): Promise<SubItemScoreHistory[]> {
-    // console.log('TCL: classId', classId)
-    // console.log('TCL: ItemId', ItemId)
+  subItemScoreHistory(classId: number): Promise<SubItemScoreHistory[]> {
     return new Promise((resolve, reject) => {
-      db.transaction(function(context) {
-        context.executeSql(
-          'SELECT id, check_sub_id, change_score, create_time FROM duty_score_history WHERE class_id = ? AND check_id = ?',
-          [ItemId, classId],
-          function(tx, rs) {
-            const results = rs.rows
+      db.transaction(
+        function(context) {
+          context.executeSql(
+            'SELECT duty_check_sub_item_config_id FROM duty_check_sub_item_config',
+            [],
+            function(tx, rs) {
+              const checkSubIds = rs.rows
 
-            let k = 0
-            const deductions = []
-            for (let i = 0; i < results.length; i++) {
+              const toDayDate = toDayTime(new Date())
+              // var toDayTime = "2019-01-01";
               context.executeSql(
-                'SELECT media_address FROM duty_media WHERE duty_history_id = ?',
-                [results[k].id],
+                'SELECT * FROM duty_score_history WHERE class_id = ? AND create_time > ?',
+                [classId, toDayDate],
                 function(tx, rs) {
-                  const urls = rs.rows
-                  const media_address = []
+                  // 本班级今天的历史纪录
+                  const historys = rs.rows
 
-                  for (let j = 0; j < urls.length; j++) {
-                    media_address.push(urls[j])
-                  }
+                  context.executeSql(
+                    'SELECT * FROM duty_media WHERE duty_history_id IN (SELECT id FROM duty_score_history WHERE class_id = ? AND create_time > ?)',
+                    [classId, toDayDate],
+                    function(tx, rs) {
+                      // 历史纪录的图片
+                      const medias = rs.rows
 
-                  const deduction = {
-                    check_sub_id: results[k].check_sub_id,
-                    change_score: results[k].change_score,
-                    create_time: results[k].create_time,
-                    media_address
-                  }
-                  deductions.push(deduction)
-                  k++
+                      const checkSubScoreArr = []
+
+                      for (let i = 0; i < checkSubIds.length; i++) {
+                        const checkSubDeduction = { check_sub_id: checkSubIds[i], deductionArr: [] }
+
+                        for (let j = 0; j < historys.length; j++) {
+                          if (
+                            checkSubIds[i].duty_check_sub_item_config_id == historys[j].check_sub_id
+                          ) {
+                            const media_address = []
+
+                            for (let h = 0; h < medias.length; h++) {
+                              if (medias[h].duty_history_id == historys[j].id) {
+                                media_address.push(medias[h].media_address)
+                              }
+                            }
+
+                            const deduction = {
+                              create_time: historys[j].create_time,
+                              change_score: historys[j].change_score,
+                              media_address
+                            }
+                            checkSubDeduction.deductionArr.push(deduction)
+                          }
+                        }
+
+                        if (checkSubDeduction.deductionArr.length > 0) {
+                          checkSubScoreArr.push(checkSubDeduction)
+                        }
+                      }
+
+                      resolve(checkSubScoreArr)
+                    }
+                  )
                 }
               )
             }
-
-            resolve(deductions)
-          }
-        )
-      })
+          )
+        },
+        function(error) {
+          reject(error)
+        },
+        function() {}
+      )
     })
   }
 
@@ -805,29 +832,29 @@ export class DbService {
               }
             }
 
-            // const h = data.content.dutyScoreHistory
-            // if (h != null) {
-            //   for (let i = 0; i < h.length; i++) {
-            //     const sql = `INSERT INTO duty_score_history(uuid,school_id,class_id,check_id,check_name,check_sub_id,check_sub_name,change_score,is_media,status,create_time) VALUES("${
-            //       h[i].uuid
-            //     }",${h[i].schoolId},${h[i].classId},${h[i].checkId},"${h[i].checkName}",${
-            //       h[i].checkSubId
-            //     },"${h[i].checkSubName}",${h[i].changeScore},1,0,"${h[i].createTime}")`
-            //     console.log(sql)
-            //     context.executeSql(sql)
-            //   }
-            // }
+            const h = data.content.dutyScoreHistory
+            if (h != null) {
+              for (let i = 0; i < h.length; i++) {
+                const sql = `INSERT INTO duty_score_history(uuid,school_id,class_id,check_id,check_name,check_sub_id,check_sub_name,change_score,is_media,status,create_time) VALUES("${
+                  h[i].uuid
+                }",${h[i].schoolId},${h[i].classId},${h[i].checkId},"${h[i].checkName}",${
+                  h[i].checkSubId
+                },"${h[i].checkSubName}",${h[i].changeScore},1,0,"${h[i].createTime}")`
+                console.log(sql)
+                context.executeSql(sql)
+              }
+            }
 
-            // const m = data.content.dutyMedia
-            // if (m != null) {
-            //   for (let i = 0; i < m.length; i++) {
-            //     const sql = `INSERT INTO duty_media(duty_history_id,type,media_address,create_time) VALUES(${
-            //       m[i].dutyHistoryId
-            //     },1,"${m[i].mediaAddress}","${m[i].createTime}")`
-            //     console.log(sql)
-            //     context.executeSql(sql)
-            //   }
-            // }
+            const m = data.content.dutyMedia
+            if (m != null) {
+              for (let i = 0; i < m.length; i++) {
+                const sql = `INSERT INTO duty_media(duty_history_id,type,media_address,create_time) VALUES(${
+                  m[i].dutyHistoryId
+                },1,"${m[i].mediaAddress}","${m[i].createTime}")`
+                console.log(sql)
+                context.executeSql(sql)
+              }
+            }
           }
         })
       },

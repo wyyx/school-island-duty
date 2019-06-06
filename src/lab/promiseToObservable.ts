@@ -1,7 +1,7 @@
 import { Observable, from } from 'rxjs'
 import { tap } from 'rxjs/operators'
 
-console.log('oooooooooooo')
+// console.log('oooooooooooo')
 
 const p = new Promise((resolve, reject) => {
   resolve('houdini')
@@ -10,7 +10,7 @@ const p = new Promise((resolve, reject) => {
 from(p)
   .pipe(
     tap(res => {
-      console.log('TCL: res', res)
+      // console.log('TCL: res', res)
     })
   )
   .subscribe()
