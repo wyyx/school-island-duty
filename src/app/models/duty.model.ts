@@ -9,7 +9,8 @@ export interface DeductionCatetoryModified {
 }
 
 export interface DeducionOption {
-  label: string
+  id: number
+  label: string | number
   rule: string
   value: number
 }
@@ -22,13 +23,14 @@ export interface DeductionModified {
 
 export interface GradeVo {
   label: string
-  value: number
+  value: number | string
   classes: AClassVo[]
 }
 
 export interface AClassVo {
   label: string
   value: number
+  id: number
 }
 
 export interface NewDuty {

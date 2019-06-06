@@ -1,1 +1,28 @@
-{ "class_id": 1, "grade": "2014级", "name": "1班" }
+{
+  "class_id": 2,
+  "check_id": 1,
+  "check_name": "纪律",
+  "autograph": "",
+  "checkSub": [
+    {
+      "check_sub_id": 8,
+      "check_sub_name": "上课说话",
+      "change_score": 2,
+      "is_media": 1,
+      "addressList": [
+        { "type": 1, "media_address": "路径为三" },
+        { "type": 1, "media_address": "路径为四" }
+      ]
+    },
+    {
+      "check_sub_id": 2,
+      "check_sub_name": "未按时出勤",
+      "change_score": 3,
+      "is_media": 1,
+      "addressList": [
+        { "type": 1, "media_address": "路径为三" },
+        { "type": 1, "media_address": "路径为三" }
+      ]
+    }
+  ]
+}

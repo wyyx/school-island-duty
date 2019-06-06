@@ -19,7 +19,7 @@ export interface DeviceConfig {
   del: number
 }
 
-export interface DutyConfig {
+export interface DutyCheckItem {
   id: number
   duty_check_item_config_id: number
   school_id: number
@@ -31,7 +31,7 @@ export interface DutyConfig {
   deleted: number
 }
 
-export interface DutySubConfig {
+export interface DutyCheckSubItem {
   id: number
   duty_check_item_config_id: number
   duty_check_sub_item_config_id: number
@@ -67,4 +67,32 @@ export interface DutyScoreHistory {
   create_time: string
   update_time: string
   deleted: number
+}
+
+export interface SubItemScoreHistory {
+  check_sub_id: number
+  change_score: number
+  create_time: string
+  media_address: string[]
+}
+
+export interface DeductionPost {
+  class_id: number
+  check_id: number
+  check_name: string
+  autograph: string
+  checkSub: CheckSubPost[]
+}
+
+export interface CheckSubPost {
+  check_sub_id: number
+  check_sub_name: string
+  change_score: number
+  is_media: number
+  addressList: AddressList[]
+}
+
+export interface AddressList {
+  type: number
+  media_address: string
 }

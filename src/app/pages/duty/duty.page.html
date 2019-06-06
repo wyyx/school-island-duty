@@ -1,6 +1,6 @@
 <ion-content>
   <ion-grid class="container">
-    <ion-row class="ion-nowrap">
+    <ion-row class="ion-nowrap wrapper">
       <!-- left -->
       <ion-col class="left shrink" style="max-width: unset !important;">
         <div>
@@ -44,6 +44,7 @@
         <ion-slides pager="true" [options]="slideOpts" class="duty-slides">
           <ion-slide *ngFor="let category of deductionCatogoryListModified">
             <ion-grid class="ion-padding">
+              <!-- class fullname and deduction option name -->
               <ion-row>
                 <ion-col>
                   <ion-row class="category-and-fullname">
@@ -114,7 +115,7 @@
                         fill="outline"
                         expand="block"
                         color="primary"
-                        (tap)="submit(option)"
+                        (tap)="submit(category, option)"
                       >
                         提交
                       </ion-button>

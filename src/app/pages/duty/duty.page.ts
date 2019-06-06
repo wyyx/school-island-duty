@@ -1,8 +1,9 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { IonSelect } from '@ionic/angular'
+import { Observable } from 'rxjs'
 import { listAnim } from 'src/app/animations/list.anim'
 import { SelectScoreModalComponent } from 'src/app/components/select-score-modal/select-score-modal.component'
-import { deductionCategoryList, grades } from 'src/app/configs/class.config'
+import { SubItemScoreHistory, DeductionPost } from 'src/app/models/duty-db.model'
 import {
   AClassVo,
   DeductionCatetoryModified,
@@ -11,7 +12,6 @@ import {
 } from 'src/app/models/duty.model'
 import { PopoverService } from 'src/app/services/popover.service'
 import { ToastService } from 'src/app/services/toast.service'
-import { cloneDeep } from 'lodash'
 import { dbService } from 'src/app/storage/db.service'
 import { convertToArray } from 'src/app/utils/sql.util'
 
@@ -26,10 +26,11 @@ const SIZE_PRE_SLIDE = 5
 export class DutyPage implements OnInit, AfterViewInit {
   @ViewChild('gradeSelect') gradeSelect: IonSelect
 
-  grades = grades
+  grades: GradeVo[] = []
   currentGrade: GradeVo = {} as GradeVo
   currentClass: AClassVo = {} as AClassVo
   gradeValue: number
+  currentSubItemScoreHistoryList: SubItemScoreHistory[]
 
   deductionCatogoryListModified: DeductionCatetoryModified[] = []
 
@@ -62,8 +63,8 @@ export class DutyPage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.loadDeductionCategory()
     this.loadGrades()
+    this.loadDeductionCategory()
   }
 
   setInitData() {
@@ -102,59 +103,75 @@ export class DutyPage implements OnInit, AfterViewInit {
       })
   }
 
-  submit(option: DeductionModified) {
-    option.score = 0
+  submit(category: DeductionCatetoryModified, option: DeductionModified) {
+    console.log('TCL: DutyPage -> submit -> option', option)
 
-    this.toastService
-      .showToast({
-        message: '您已经成功提交本次值周记录！',
-        showCloseButton: true,
-        closeButtonText: '关闭',
-        color: 'success',
-        duration: 2000
-      })
-      .then(res => {})
+    // this.toastService
+    //   .showToast({
+    //     message: '您已经成功提交本次值周记录！',
+    //     showCloseButton: true,
+    //     closeButtonText: '关闭',
+    //     color: 'success',
+    //     duration: 2000
+    //   })
+    //   .then(res => {})
+
+    // let data: DeductionPost = {
+    //   autograph: '',
+    //   checkSub: [],
+    //   check_id: category.category
+
+    // }
   }
 
   loadDeductionCategory() {
-    this.deductionCatogoryListModified = deductionCategoryList.map(category => {
-      return {
-        ...category,
-        deductionOptions: category.deductionOptions.map(
-          option => ({ score: 0, imgUrls: [], deductionOption: option } as DeductionModified)
-        )
-      }
+    dbService.allItemList().then(itemList => {
+      console.log('TCL: DutyPage -> loadDeductionCategory -> itemList', itemList)
+
+      this.deductionCatogoryListModified = itemList.map(item => {
+        return {
+          category: item.item.check_name,
+          deductionOptions: item.subItemArr.map(subItem => {
+            return {
+              score: 0,
+              imgUrls: [],
+              deductionOption: {
+                id: subItem.duty_check_sub_item_config_id,
+                label: subItem.duty_check_sub_item_config_id,
+                rule: subItem.name,
+                value: subItem.duty_check_sub_item_config_id
+              }
+            } as DeductionModified
+          })
+        } as DeductionCatetoryModified
+      })
     })
   }
 
   loadGrades() {
-    const gradesTemp: GradeVo[] = []
-
     dbService
       .gradeList()
       .then(convertToArray)
       .then(gradeList => {
-        console.log('TCL: DutyPage -> loadGrades -> gradeList', gradeList)
-
         gradeList.forEach(grade => {
           dbService
             .classesList(grade.grade)
             .then(convertToArray)
             .then(classList => {
-              console.log('TCL: DutyPage -> loadGrades -> classList', classList)
-
-              gradesTemp.push({
+              // convert Grade to GradeVo
+              this.grades.push({
                 label: grade.grade,
                 classes: classList.map(aClass => {
+                  // convert AClass to AClassVo
                   return {
                     label: aClass.name,
-                    value: aClass.class_id
+                    value: aClass.class_id,
+                    id: aClass.class_id
                   } as AClassVo
                 }),
-                value: grade.id
+                value: grade.grade
               })
 
-              this.grades = gradesTemp
               this.setInitData()
             })
         })
@@ -163,5 +180,6 @@ export class DutyPage implements OnInit, AfterViewInit {
 
   setClass(aclass: AClassVo) {
     this.currentClass = aclass
+    // dbService.subItemScoreHistory()
   }
 }
