@@ -7,7 +7,9 @@ export interface Grade {
 }
 
 export interface AClass {
-  id: number
+  class_id: number
+  grade: string
+  name: string
 }
 
 export interface DeviceConfig {

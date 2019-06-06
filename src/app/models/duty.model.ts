@@ -20,13 +20,13 @@ export interface DeductionModified {
   deductionOption: DeducionOption
 }
 
-export interface Grade {
+export interface GradeVo {
   label: string
   value: number
-  classes: AClass[]
+  classes: AClassVo[]
 }
 
-export interface AClass {
+export interface AClassVo {
   label: string
   value: number
 }

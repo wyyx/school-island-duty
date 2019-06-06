@@ -4,6 +4,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx'
 import { StatusBar } from '@ionic-native/status-bar/ngx'
 import { Platform } from '@ionic/angular'
 import { Storage } from '@ionic/storage'
+import { DbService, dbService } from './storage/db.service'
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ export class AppComponent {
     private storage: Storage
   ) {
     this.initializeApp()
+    dbService.initDb()
   }
 
   initializeApp() {

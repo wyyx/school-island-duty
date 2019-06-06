@@ -1,6 +1,6 @@
-import { Grade, DeducionOption } from '../models/duty.model'
+import { GradeVo, DeducionOption } from '../models/duty.model'
 
-export const grades: Grade[] = [
+export const grades: GradeVo[] = [
   {
     label: '一年级',
     value: 1,

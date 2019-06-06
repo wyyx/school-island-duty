@@ -4,14 +4,16 @@ import { listAnim } from 'src/app/animations/list.anim'
 import { SelectScoreModalComponent } from 'src/app/components/select-score-modal/select-score-modal.component'
 import { deductionCategoryList, grades } from 'src/app/configs/class.config'
 import {
-  AClass,
+  AClassVo,
   DeductionCatetoryModified,
   DeductionModified,
-  Grade
+  GradeVo
 } from 'src/app/models/duty.model'
 import { PopoverService } from 'src/app/services/popover.service'
 import { ToastService } from 'src/app/services/toast.service'
 import { cloneDeep } from 'lodash'
+import { dbService } from 'src/app/storage/db.service'
+import { convertToArray } from 'src/app/utils/sql.util'
 
 const SIZE_PRE_SLIDE = 5
 
@@ -25,8 +27,8 @@ export class DutyPage implements OnInit, AfterViewInit {
   @ViewChild('gradeSelect') gradeSelect: IonSelect
 
   grades = grades
-  currentGrade: Grade = {} as Grade
-  currentClass: AClass = {} as AClass
+  currentGrade: GradeVo = {} as GradeVo
+  currentClass: AClassVo = {} as AClassVo
   gradeValue: number
 
   deductionCatogoryListModified: DeductionCatetoryModified[] = []
@@ -62,6 +64,9 @@ export class DutyPage implements OnInit, AfterViewInit {
   ngOnInit() {
     this.loadDeductionCategory()
     this.loadGrades()
+  }
+
+  setInitData() {
     this.setFirstGrade()
     this.setFirstClass()
   }
@@ -123,10 +128,40 @@ export class DutyPage implements OnInit, AfterViewInit {
   }
 
   loadGrades() {
-    this.grades = grades
+    const gradesTemp: GradeVo[] = []
+
+    dbService
+      .gradeList()
+      .then(convertToArray)
+      .then(gradeList => {
+        console.log('TCL: DutyPage -> loadGrades -> gradeList', gradeList)
+
+        gradeList.forEach(grade => {
+          dbService
+            .classesList(grade.grade)
+            .then(convertToArray)
+            .then(classList => {
+              console.log('TCL: DutyPage -> loadGrades -> classList', classList)
+
+              gradesTemp.push({
+                label: grade.grade,
+                classes: classList.map(aClass => {
+                  return {
+                    label: aClass.name,
+                    value: aClass.class_id
+                  } as AClassVo
+                }),
+                value: grade.id
+              })
+
+              this.grades = gradesTemp
+              this.setInitData()
+            })
+        })
+      })
   }
 
-  setClass(aclass: AClass) {
+  setClass(aclass: AClassVo) {
     this.currentClass = aclass
   }
 }
