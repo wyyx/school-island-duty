@@ -1,9 +1,8 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { IonSelect } from '@ionic/angular'
-import { Observable } from 'rxjs'
 import { listAnim } from 'src/app/animations/list.anim'
 import { SelectScoreModalComponent } from 'src/app/components/select-score-modal/select-score-modal.component'
-import { SubItemScoreHistory, DeductionPost } from 'src/app/models/duty-db.model'
+import { DeductionPost, SubItemScoreHistory } from 'src/app/models/duty-db.model'
 import {
   AClassVo,
   DeductionCatetoryModified,
@@ -105,23 +104,53 @@ export class DutyPage implements OnInit, AfterViewInit {
 
   submit(category: DeductionCatetoryModified, option: DeductionModified) {
     console.log('TCL: DutyPage -> submit -> option', option)
+    console.log('TCL: DutyPage -> submit -> category', category)
 
-    // this.toastService
-    //   .showToast({
-    //     message: '您已经成功提交本次值周记录！',
-    //     showCloseButton: true,
-    //     closeButtonText: '关闭',
-    //     color: 'success',
-    //     duration: 2000
-    //   })
-    //   .then(res => {})
+    const data: DeductionPost = {
+      autograph: '',
+      checkSub: [
+        {
+          addressList: [],
+          change_score: -option.score,
+          check_sub_id: option.deductionOption.id,
+          check_sub_name: option.deductionOption.rule,
+          is_media: 1
+        }
+      ],
+      check_id: category.id,
+      check_name: category.category,
+      class_id: this.currentClass.id
+    }
 
-    // let data: DeductionPost = {
-    //   autograph: '',
-    //   checkSub: [],
-    //   check_id: category.category
+    console.log('TCL: DutyPage -> submit -> data', data)
 
-    // }
+    dbService
+      .saveScore(data)
+      .then(() => {
+        this.toastService.showToast({
+          message: '您已经成功提交本次值周记录！',
+          showCloseButton: true,
+          closeButtonText: '关闭',
+          color: 'success',
+          duration: 2000
+        })
+
+        this.resetSubItem(option)
+      })
+      .catch(error => {
+        this.toastService.showToast({
+          message: '提交失败！出现意外错误，请稍后再试.',
+          showCloseButton: true,
+          closeButtonText: '关闭',
+          color: 'danger',
+          duration: 2000
+        })
+      })
+  }
+
+  resetSubItem(subItem: DeductionModified) {
+    subItem.score = 0
+    subItem.imgUrls = []
   }
 
   loadDeductionCategory() {
@@ -129,7 +158,10 @@ export class DutyPage implements OnInit, AfterViewInit {
       console.log('TCL: DutyPage -> loadDeductionCategory -> itemList', itemList)
 
       this.deductionCatogoryListModified = itemList.map(item => {
+        console.log('TCL: DutyPage -> loadDeductionCategory -> item xxxxxxxxxxxxxxxxxx', item)
+
         return {
+          id: item.item.duty_check_item_config_id,
           category: item.item.check_name,
           deductionOptions: item.subItemArr.map(subItem => {
             return {

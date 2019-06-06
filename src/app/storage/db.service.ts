@@ -5,7 +5,8 @@ import {
   DutyCheckItem,
   DutyCheckSubItem,
   SubItemScoreHistory,
-  DeductionPost
+  DeductionPost,
+  DutyHistoryItem
 } from '../models/duty-db.model'
 
 const deviceCode = '1-002'
@@ -19,6 +20,10 @@ export class DbService {
   initDb() {
     this.Onload()
 
+    // this.resetDb()
+  }
+
+  resetDb() {
     this.DropTable()
     this.InitDataAll()
   }
@@ -577,50 +582,57 @@ export class DbService {
    * 查询pad的扣分记录
    * @param type 为0时查询未上传的记录，不传时查询所有
    */
-  historyList(type) {
+  historyList(type?: 0): Promise<DutyHistoryItem[]> {
     return new Promise((resolve, reject) => {
+      /*查询所有或者查询未上传*/
+      let fragment = ''
+      if (type != null) {
+        fragment = ' AND status = 0 '
+      }
+
+      const toDay = '2019-01-01'
+      // var toDay = toDayTime(new Date());
+
       db.transaction(function(context) {
-        /*查询所有或者查询未上传*/
-        let fragment = ' '
-        if (type != null) {
-          fragment = ' AND status = 0 '
-        }
-
-        const toDayRes = toDay(new Date().getTime())
-
         context.executeSql(
-          'SELECT * FROM duty_score_history WHERE create_time = ?' +
+          'SELECT * FROM duty_score_history WHERE create_time > ? ' +
             fragment +
-            'ORDER BY create_time',
+            ' ORDER BY create_time',
           [toDay],
-          function(tx, results) {
-            const historys = results.rows
+          function(tx, rs) {
+            const results = rs.rows
 
-            resolve(historys)
+            const historyArr = []
 
-            let k = 0
-            for (let i = 0; i < historys.length; i++) {
-              context.executeSql(
-                'SELECT media_address FROM duty_media WHERE duty_history_id = ?',
-                [historys[k].id],
-                function(tx, rs) {
-                  const urls = rs.rows
-                  const urlArr = []
+            context.executeSql(
+              'SELECT duty_history_id,media_address FROM duty_media WHERE duty_history_id IN (SELECT id FROM duty_score_history WHERE create_time > ? ' +
+                fragment +
+                ' ORDER BY create_time)',
+              [toDay],
+              function(tx, rs) {
+                const urls = rs.rows
+
+                for (let i = 0; i < results.length; i++) {
+                  const media_address = []
+
                   for (let j = 0; j < urls.length; j++) {
-                    urlArr.push(urls[j].media_address)
+                    if (results[i].id == urls[j].duty_history_id) {
+                      media_address.push(urls[j].media_address)
+                    }
                   }
-
-                  console.log(
-                    historys[k].create_time,
-                    historys[k].class_name,
-                    historys[k].change_score,
-                    historys[k].status,
-                    urlArr
-                  )
-                  k++
+                  const history = {
+                    create_time: results[i].create_time,
+                    class_name: results[i].class_name,
+                    change_score: results[i].change_score,
+                    status: results[i].status,
+                    media_address
+                  }
+                  historyArr.push(history)
                 }
-              )
-            }
+
+                resolve(historyArr)
+              }
+            )
           }
         )
       })
@@ -793,29 +805,29 @@ export class DbService {
               }
             }
 
-            const h = data.content.dutyScoreHistory
-            if (h != null) {
-              for (let i = 0; i < h.length; i++) {
-                const sql = `INSERT INTO duty_score_history(uuid,school_id,class_id,check_id,check_name,check_sub_id,check_sub_name,change_score,is_media,status,create_time) VALUES("${
-                  h[i].uuid
-                }",${h[i].schoolId},${h[i].classId},${h[i].checkId},"${h[i].checkName}",${
-                  h[i].checkSubId
-                },"${h[i].checkSubName}",${h[i].changeScore},1,0,"${h[i].createTime}")`
-                console.log(sql)
-                context.executeSql(sql)
-              }
-            }
+            // const h = data.content.dutyScoreHistory
+            // if (h != null) {
+            //   for (let i = 0; i < h.length; i++) {
+            //     const sql = `INSERT INTO duty_score_history(uuid,school_id,class_id,check_id,check_name,check_sub_id,check_sub_name,change_score,is_media,status,create_time) VALUES("${
+            //       h[i].uuid
+            //     }",${h[i].schoolId},${h[i].classId},${h[i].checkId},"${h[i].checkName}",${
+            //       h[i].checkSubId
+            //     },"${h[i].checkSubName}",${h[i].changeScore},1,0,"${h[i].createTime}")`
+            //     console.log(sql)
+            //     context.executeSql(sql)
+            //   }
+            // }
 
-            const m = data.content.dutyMedia
-            if (m != null) {
-              for (let i = 0; i < m.length; i++) {
-                const sql = `INSERT INTO duty_media(duty_history_id,type,media_address,create_time) VALUES(${
-                  m[i].dutyHistoryId
-                },1,"${m[i].mediaAddress}","${m[i].createTime}")`
-                console.log(sql)
-                context.executeSql(sql)
-              }
-            }
+            // const m = data.content.dutyMedia
+            // if (m != null) {
+            //   for (let i = 0; i < m.length; i++) {
+            //     const sql = `INSERT INTO duty_media(duty_history_id,type,media_address,create_time) VALUES(${
+            //       m[i].dutyHistoryId
+            //     },1,"${m[i].mediaAddress}","${m[i].createTime}")`
+            //     console.log(sql)
+            //     context.executeSql(sql)
+            //   }
+            // }
           }
         })
       },
@@ -835,9 +847,9 @@ export class DbService {
         context.executeSql('DROP TABLE class')
         context.executeSql('DROP TABLE config')
         context.executeSql('DROP TABLE duty_check_sub_item_config')
-        context.executeSql('DROP TABLE duty_media')
+        // context.executeSql('DROP TABLE duty_media')
         context.executeSql('DROP TABLE duty_check_item_config')
-        context.executeSql('DROP TABLE duty_score_history')
+        // context.executeSql('DROP TABLE duty_score_history')
         context.executeSql('DROP TABLE school')
       },
       function(error) {
@@ -849,105 +861,110 @@ export class DbService {
     )
   }
 
-  scoreSave(data: DeductionPost) {
-    // 保存扣分记录
-    // var data = {"class_id": 2, "check_id": 1, "check_name": "纪律", "autograph": "", "checkSub": [{"check_sub_id": 8, "check_sub_name": "上课说话", "change_score": 2, "is_media": 1, "addressList": [{"type": 1, "media_address": "路径为三"}, {"type": 1, "media_address": "路径为四"}]},{"check_sub_id": 2, "check_sub_name": "未按时出勤", "change_score": 3, "is_media": 1, "addressList": [{"type": 1, "media_address": "路径为三"}, {"type": 1, "media_address": "路径为三"}]}]};
-    db.transaction(
-      function(context) {
-        /*查班级*/
-        context.executeSql('SELECT * FROM class where class_id = ?', [data.class_id], function(
-          tx,
-          rs
-        ) {
-          const classObj = rs.rows[0] // 班级数据
-          const date = timeStamp2String(new Date().getTime()) // 当前时间
+  saveScore(data: DeductionPost) {
+    return new Promise((resolve, reject) => {
+      // 保存扣分记录
+      // var data = {"class_id": 2, "check_id": 1, "check_name": "纪律", "autograph": "", "checkSub": [{"check_sub_id": 8, "check_sub_name": "上课说话", "change_score": 2, "is_media": 1, "addressList": [{"type": 1, "media_address": "路径为三"}, {"type": 1, "media_address": "路径为四"}]},{"check_sub_id": 2, "check_sub_name": "未按时出勤", "change_score": 3, "is_media": 1, "addressList": [{"type": 1, "media_address": "路径为三"}, {"type": 1, "media_address": "路径为三"}]}]};
+      db.transaction(
+        function(context) {
+          /*查班级*/
+          context.executeSql('SELECT * FROM class where class_id = ?', [data.class_id], function(
+            tx,
+            rs
+          ) {
+            const classObj = rs.rows[0] // 班级数据
+            const date = timeStamp2String(new Date().getTime()) // 当前时间
 
-          const checkSub = data.checkSub // 页面扣分
-          let totalScore = 0 // 此检查大项 扣的总分
-          // 计算扣的总分
-          for (let i = 0; i < checkSub.length; i++) {
-            totalScore = totalScore + checkSub[i].change_score
-          }
-          const mondayDate = timeStamp2String(getFirstDayOfWeek(new Date()).getTime()) // 获取本周周一的时间
-          /*查询本周本检查项扣了多少分*/
-          context.executeSql(
-            'SELECT sum(change_score) change_score FROM duty_score_history WHERE check_id = ? AND class_id = ? AND create_time >= ?',
-            [data.check_id, classObj.class_id, mondayDate],
-            function(tx, rs) {
-              const historyTotalScore =
-                rs.rows[0].change_score == null ? 0 : rs.rows[0].change_score // 本周此检查项扣的总分
-
-              /*查询此检查项设置的最大分值*/
-              context.executeSql(
-                'SELECT * FROM duty_check_item_config where duty_check_item_config_id = ? AND school_id = ?',
-                [data.check_id, classObj.school_id],
-                function(tx, rs) {
-                  const score = rs.rows[0].check_score // 此检查项的分值
-                  // 负值所以相减
-                  if (-totalScore - historyTotalScore > score) {
-                    console.log('每周扣分不能大于大项的分。。。')
-                    return
-                  }
-
-                  let k = 0
-                  for (let i = 0; i < checkSub.length; i++) {
-                    const uuid = new Date().getTime()
-
-                    /*添加历史数据*/
-                    context.executeSql(
-                      'INSERT INTO duty_score_history(uuid,school_id,class_id,class_name,check_id,check_name,check_sub_id,check_sub_name,change_score,remarks,executor_id,executor_name,is_media,autograph,create_time,update_time) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                      [
-                        uuid,
-                        classObj.school_id,
-                        classObj.class_id,
-                        classObj.grade + classObj.name,
-                        data.check_id,
-                        data.check_name,
-                        checkSub[i].check_sub_id,
-                        checkSub[i].check_sub_name,
-                        checkSub[i].change_score,
-                        '',
-                        '',
-                        '',
-                        checkSub[i].is_media,
-                        '',
-                        date,
-                        date
-                      ],
-                      function(tx, rs) {
-                        if (checkSub[k].is_media == 1) {
-                          const addressList = checkSub[k].addressList
-                          for (let j = 0; j < addressList.length; j++) {
-                            /*添加媒体数据*/
-                            context.executeSql(
-                              'INSERT INTO duty_media(duty_history_id,type,media_address,create_time,update_time) VALUES(?,?,?,?,?)',
-                              [
-                                rs.insertId,
-                                addressList[j].type,
-                                addressList[j].media_address,
-                                date,
-                                date
-                              ]
-                            )
-                          }
-                        }
-                        k++
-                      }
-                    )
-                  }
-                }
-              )
+            const checkSub = data.checkSub // 页面扣分
+            let totalScore = 0 // 此检查大项 扣的总分
+            // 计算扣的总分
+            for (let i = 0; i < checkSub.length; i++) {
+              totalScore = totalScore + checkSub[i].change_score
             }
-          )
-        })
-      },
-      function(error) {
-        console.log('保存扣分失败:[' + error.message + ']')
-      },
-      function() {
-        console.log('保存扣分成功')
-      }
-    )
+            const mondayDate = timeStamp2String(getFirstDayOfWeek(new Date()).getTime()) // 获取本周周一的时间
+            /*查询本周本检查项扣了多少分*/
+            context.executeSql(
+              'SELECT sum(change_score) change_score FROM duty_score_history WHERE check_id = ? AND class_id = ? AND create_time >= ?',
+              [data.check_id, classObj.class_id, mondayDate],
+              function(tx, rs) {
+                const historyTotalScore =
+                  rs.rows[0].change_score == null ? 0 : rs.rows[0].change_score // 本周此检查项扣的总分
+
+                /*查询此检查项设置的最大分值*/
+                context.executeSql(
+                  'SELECT * FROM duty_check_item_config where duty_check_item_config_id = ? AND school_id = ?',
+                  [data.check_id, classObj.school_id],
+                  function(tx, rs) {
+                    const score = rs.rows[0].check_score // 此检查项的分值
+                    // 负值所以相减
+                    if (-totalScore - historyTotalScore > score) {
+                      console.log('每周扣分不能大于大项的分。。。')
+                      reject()
+                      return
+                    }
+
+                    let k = 0
+                    for (let i = 0; i < checkSub.length; i++) {
+                      const uuid = new Date().getTime()
+
+                      /*添加历史数据*/
+                      context.executeSql(
+                        'INSERT INTO duty_score_history(uuid,school_id,class_id,class_name,check_id,check_name,check_sub_id,check_sub_name,change_score,remarks,executor_id,executor_name,is_media,autograph,create_time,update_time) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                        [
+                          uuid,
+                          classObj.school_id,
+                          classObj.class_id,
+                          classObj.grade + classObj.name,
+                          data.check_id,
+                          data.check_name,
+                          checkSub[i].check_sub_id,
+                          checkSub[i].check_sub_name,
+                          checkSub[i].change_score,
+                          '',
+                          '',
+                          '',
+                          checkSub[i].is_media,
+                          '',
+                          date,
+                          date
+                        ],
+                        function(tx, rs) {
+                          if (checkSub[k].is_media == 1) {
+                            const addressList = checkSub[k].addressList
+                            for (let j = 0; j < addressList.length; j++) {
+                              /*添加媒体数据*/
+                              context.executeSql(
+                                'INSERT INTO duty_media(duty_history_id,type,media_address,create_time,update_time) VALUES(?,?,?,?,?)',
+                                [
+                                  rs.insertId,
+                                  addressList[j].type,
+                                  addressList[j].media_address,
+                                  date,
+                                  date
+                                ]
+                              )
+                            }
+                          }
+                          k++
+                        }
+                      )
+                    }
+                    resolve()
+                  }
+                )
+              }
+            )
+          })
+        },
+        function(error) {
+          console.log('保存扣分失败:[' + error.message + ']')
+          reject()
+        },
+        function() {
+          console.log('保存扣分成功')
+        }
+      )
+    })
   }
 }
 
@@ -975,7 +992,7 @@ function getFirstDayOfWeek(date) {
  * @param time 当前时间 new Date().getTime()
  * @returns {string}
  */
-function toDay(time) {
+function toDayTime(time) {
   const datetime = new Date()
   datetime.setTime(time)
   const year = datetime.getFullYear()

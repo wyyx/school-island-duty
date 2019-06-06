@@ -55,7 +55,7 @@ export interface DutyMedia {
   deleted: number
 }
 
-export interface DutyScoreHistory {
+export interface DutyHistoryItem {
   id: number
   uuid: number
   school_id: number

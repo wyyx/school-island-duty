@@ -4,6 +4,7 @@ export interface DeductionCatetory {
 }
 
 export interface DeductionCatetoryModified {
+  id: number
   category: string
   deductionOptions: DeductionModified[]
 }
@@ -13,6 +14,7 @@ export interface DeducionOption {
   label: string | number
   rule: string
   value: number
+  name: string
 }
 
 export interface DeductionModified {
