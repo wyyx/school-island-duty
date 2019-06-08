@@ -33,4 +33,9 @@
   top: 0px !important;
   bottom: unset !important;
   z-index: 3000;
+  padding: 10px !important;
+}
+
+.ion-invalid.ion-touched ion-label {
+  color: var(--ion-color-danger) !important;
 }

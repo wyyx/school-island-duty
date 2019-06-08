@@ -5,36 +5,30 @@
       <ion-col class="left shrink" style="max-width: unset !important;">
         <div>
           <ion-list>
-            <ion-item (tap)="openSelectGrade($event)" button>
+            <ion-item (tap)="openSelectGrade($event)" button="true">
               <ion-label class="pr-10">
-                {{ currentGrade.label }}
+                {{ currentGrade.grade }}
               </ion-label>
               <ion-icon name="arrow-dropdown"></ion-icon>
             </ion-item>
             <ion-item [hidden]="true">
-              <ion-label>{{ gradeValue }}</ion-label>
-              <ion-select
-                [(ngModel)]="gradeValue"
-                (ionChange)="onGradeChange($event)"
-                interface="popover"
-                #gradeSelect
-              >
-                <ion-select-option *ngFor="let grade of grades" [value]="grade.value">
-                  {{ grade.label }}
+              <ion-select [(ngModel)]="currentGrade" interface="popover" #gradeSelect>
+                <ion-select-option *ngFor="let grade of grades" [value]="grade">
+                  {{ grade.grade }}
                 </ion-select-option>
               </ion-select>
             </ion-item>
           </ion-list>
           <ion-list>
             <ion-item
-              *ngFor="let aclass of currentGrade.classes"
-              [color]="currentClass.value === aclass.value ? 'primary' : ''"
+              *ngFor="let aclass of currentGrade.classList"
+              [color]="currentClass.name === aclass.name ? 'primary' : ''"
               button
               (tap)="setClass(aclass)"
               class="class-item"
             >
-              <ion-label>{{ aclass.label }}</ion-label>
-              <ion-icon *ngIf="currentClass.value === aclass.value" name="checkmark"></ion-icon>
+              <ion-label>{{ aclass.name }}</ion-label>
+              <ion-icon *ngIf="currentClass.name === aclass.name" name="checkmark"></ion-icon>
             </ion-item>
           </ion-list>
         </div>
@@ -42,7 +36,7 @@
       <!-- right -->
       <ion-col class="right" style="max-width: unset !important;">
         <ion-slides pager="true" [options]="slideOpts" class="duty-slides">
-          <ion-slide *ngFor="let category of deductionCatogoryListModified">
+          <ion-slide *ngFor="let item of checkItems">
             <ion-grid class="ion-padding">
               <!-- class fullname and deduction option name -->
               <ion-row>
@@ -54,7 +48,7 @@
                       </div>
                     </ion-col>
                     <ion-col class="text-center current-category">
-                      {{ category.category }}
+                      {{ item.check_name }}
                     </ion-col>
                   </ion-row>
                 </ion-col>
@@ -74,19 +68,19 @@
                   <div class="head-text">快照</div>
                 </ion-col>
               </ion-row>
-              <ion-row *ngFor="let option of category.deductionOptions" class="ion-padding-top">
+              <ion-row *ngFor="let subItem of item.checkSubItems" class="ion-padding-top">
                 <!-- deduction card -->
                 <ion-card class="card ion-padding">
                   <!-- card content -->
                   <ion-row class="ion-wrap">
                     <!-- index -->
                     <ion-col class="target-col shrink">
-                      <div class="label">{{ option.deductionOption.label }}</div>
+                      <div class="label">{{ subItem.duty_check_sub_item_config_id }}</div>
                     </ion-col>
                     <!-- standard -->
                     <ion-col class="grow standard-col">
                       <p class="rule-description ion-no-margin">
-                        {{ option.deductionOption.rule }}
+                        {{ subItem.description }}
                       </p>
                     </ion-col>
                     <!-- score -->
@@ -95,12 +89,14 @@
                         <ion-button
                           class="operation-btn"
                           color="light"
-                          (tap)="openSelectScorePopover(option)"
+                          (tap)="openSelectScorePopover(subItem)"
                         >
                           <ion-icon color="darkgrey" name="create" size="large"> </ion-icon>
                         </ion-button>
                       </div>
-                      <div class="text-center p-10">{{ option.score ? option.score : 0 }} 分</div>
+                      <div class="text-center p-10">
+                        {{ subItem.scoreChange ? '-' + subItem.scoreChange : 0 }} 分
+                      </div>
                     </ion-col>
                     <!-- take pictures -->
                     <ion-col class="shrink">
@@ -109,14 +105,29 @@
                       </ion-button>
                     </ion-col>
                   </ion-row>
-                  <ion-row *ngIf="option.score !== 0" class="ion-justify-content-center">
+                  <ion-row>
+                    <ion-col>
+                      <ng-container *ngFor="let scoreItem of subItemScoreHistory$ | async">
+                        <ion-chip
+                          outline="true"
+                          *ngIf="scoreItem.check_sub_id === subItem.duty_check_sub_item_config_id"
+                        >
+                          <ion-label color="danger"> {{ scoreItem.change_score }}分</ion-label>
+                        </ion-chip>
+                      </ng-container>
+                    </ion-col>
+                    <ion-col class="shrink">
+                      <ion-button fill="clear">
+                        查看本周扣分记录
+                      </ion-button>
+                    </ion-col>
+                  </ion-row>
+                  <ion-row
+                    *ngIf="subItem.scoreChange && subItem.scoreChange !== 0"
+                    class="ion-justify-content-center"
+                  >
                     <ion-col size="4" style="padding: 0px;">
-                      <ion-button
-                        fill="outline"
-                        expand="block"
-                        color="primary"
-                        (tap)="submit(category, option)"
-                      >
+                      <ion-button expand="block" color="primary" (tap)="submit(item, subItem)">
                         提交
                       </ion-button>
                     </ion-col>

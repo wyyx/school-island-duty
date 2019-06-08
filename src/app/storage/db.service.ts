@@ -2,9 +2,9 @@ import * as $ from 'jquery'
 import {
   Grade,
   AClass,
-  DutyCheckItem,
-  DutyCheckSubItem,
-  SubItemScoreHistory,
+  CheckItem,
+  CheckSubItem,
+  SubItemScoreHistoryItem,
   DeductionPost,
   DutyHistoryItem
 } from '../models/duty-db.model'
@@ -290,7 +290,7 @@ export class DbService {
    * 查询本pad可以行使的所有检查项
    */
   // 检查项的数组 大项
-  itemList(): Promise<{ [key: number]: DutyCheckItem }> {
+  itemList(): Promise<{ [key: number]: CheckItem }> {
     return new Promise((resolve, reject) => {
       // 查询大项
       db.transaction(
@@ -330,7 +330,7 @@ export class DbService {
   subItemList(
     itemId: number
   ): Promise<{
-    [key: number]: DutyCheckSubItem
+    [key: number]: CheckSubItem
   }> {
     return new Promise((resolve, reject) => {
       db.transaction(
@@ -341,7 +341,7 @@ export class DbService {
             [itemId],
             function(tx, rs) {
               const subItems: {
-                [key: number]: DutyCheckSubItem
+                [key: number]: CheckSubItem
               } = rs.rows
 
               if (subItems == null) {
@@ -362,7 +362,7 @@ export class DbService {
     })
   }
 
-  allItemList(): Promise<{ item: DutyCheckItem; subItemArr: DutyCheckSubItem[] }[]> {
+  allItemList(): Promise<{ item: CheckItem; subItemArr: CheckSubItem[] }[]> {
     return new Promise((resolve, reject) => {
       db.transaction(
         function(context) {
@@ -378,7 +378,7 @@ export class DbService {
                 function(tx, rs) {
                   const subItems = rs.rows
 
-                  const itemArr: { item: DutyCheckItem; subItemArr: DutyCheckSubItem[] }[] = []
+                  const itemArr: { item: CheckItem; subItemArr: CheckSubItem[] }[] = []
 
                   /*遍历大项*/
                   for (let i = 0; i < items.length; i++) {
@@ -415,7 +415,7 @@ export class DbService {
     })
   }
 
-  subItemScoreHistory(classId: number): Promise<SubItemScoreHistory[]> {
+  subItemScoreHistory(classId: number): Promise<SubItemScoreHistoryItem[]> {
     return new Promise((resolve, reject) => {
       db.transaction(
         function(context) {

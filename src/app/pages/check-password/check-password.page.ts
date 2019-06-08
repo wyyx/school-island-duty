@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { NavController } from '@ionic/angular'
+import { NgForm } from '@angular/forms'
 
 @Component({
   selector: 'app-check-password',
@@ -16,7 +17,10 @@ export class CheckPasswordPage implements OnInit {
     this.navCtl.back()
   }
 
-  submit() {
-    this.router.navigateByUrl('/check-device')
+  onSubmit(form: NgForm) {
+    console.log('TCL: CheckPasswordPage -> onSubmit -> form', form)
+    if (form.valid) {
+      this.router.navigateByUrl('/check-device')
+    }
   }
 }

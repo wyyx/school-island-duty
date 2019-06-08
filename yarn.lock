@@ -340,8 +340,8 @@
 
 "@ionic/storage@^2.2.0":
   version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@ionic/storage/-/storage-2.2.0.tgz#ac181991d3bfc8352a5400efb5e9faa5e76b5d4b"
-  integrity sha512-2pszrzmI+fAar2Rx0WmJDVpc15D1k5tvLkB49NLYWJ2pOMaO/3/vp7mg/mEbg3rdsPE9FRbYI6vdKjQ2pP1EWA==
+  resolved "https://registry.npm.taobao.org/@ionic/storage/download/@ionic/storage-2.2.0.tgz#ac181991d3bfc8352a5400efb5e9faa5e76b5d4b"
+  integrity sha1-rBgZkdO/yDUqVADvten6pedrXUs=
   dependencies:
     localforage "1.7.1"
     localforage-cordovasqlitedriver "1.7.0"

@@ -1,20 +1,22 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { IonSelect } from '@ionic/angular'
+import { Observable, BehaviorSubject, from } from 'rxjs'
 import { listAnim } from 'src/app/animations/list.anim'
 import { SelectScoreModalComponent } from 'src/app/components/select-score-modal/select-score-modal.component'
-import { DeductionPost, SubItemScoreHistory } from 'src/app/models/duty-db.model'
+// import { dbService } from 'src/app/storage/db.service'
+import { dbService } from 'src/app/mocks/db.mock.service'
 import {
-  AClassVo,
-  DeductionCatetoryModified,
-  DeductionModified,
-  GradeVo
-} from 'src/app/models/duty.model'
+  AClass,
+  CheckItem,
+  CheckSubItem,
+  Grade,
+  SubItemScoreHistoryItem
+} from 'src/app/models/duty-db.model'
+import { DeductionCatetoryModified, DeductionModified } from 'src/app/models/duty.model'
 import { PopoverService } from 'src/app/services/popover.service'
 import { ToastService } from 'src/app/services/toast.service'
-import { dbService } from 'src/app/storage/db.service'
 import { convertToArray } from 'src/app/utils/sql.util'
-import { Observable, from } from 'rxjs'
-import { tap } from 'rxjs/operators'
+import { switchMap, map, filter, take } from 'rxjs/operators'
 
 const SIZE_PRE_SLIDE = 5
 
@@ -27,15 +29,15 @@ const SIZE_PRE_SLIDE = 5
 export class DutyPage implements OnInit, AfterViewInit {
   @ViewChild('gradeSelect') gradeSelect: IonSelect
 
-  grades: GradeVo[] = []
-  currentGrade: GradeVo = {} as GradeVo
-  currentClass: AClassVo = {} as AClassVo
-  gradeValue: number
-  currentSubItemScoreHistoryList: SubItemScoreHistory[]
+  grades: Grade[] = []
+  currentGrade: Grade = {} as Grade
+  currentClass: AClass = {} as AClass
 
-  deductionCatogoryListModified: DeductionCatetoryModified[] = []
+  checkItems: CheckItem[] = []
+  classSubject$ = new BehaviorSubject<AClass>(null)
+  currentClass$ = this.classSubject$.asObservable()
 
-  subItemScoreHistory$: Observable<SubItemScoreHistory[]>
+  subItemScoreHistory$: Observable<SubItemScoreHistoryItem[]>
 
   slideOpts = {
     initialSlide: 0,
@@ -44,47 +46,46 @@ export class DutyPage implements OnInit, AfterViewInit {
   }
 
   get currentClassFullName() {
-    return this.currentGrade.label && this.currentClass.label
-      ? this.currentGrade.label + this.currentClass.label
+    return this.currentGrade.grade && this.currentClass.name
+      ? this.currentGrade.grade + this.currentClass.name
       : '未选班级'
   }
 
   constructor(private popoverService: PopoverService, private toastService: ToastService) {}
 
+  ngOnInit() {
+    this.loadGrades()
+    this.loadCheckItems()
+    this.subItemScoreHistory$ = this.currentClass$.pipe(
+      switchMap(aclass => {
+        console.log('TCL: DutyPage -> ngOnInit -> aclass', aclass)
+        return from(dbService.subItemScoreHistory(aclass.class_id))
+      }),
+      map(list => list || [])
+    )
+  }
+
   ngAfterViewInit(): void {}
 
+  getSubItemScoreHistory(subItem: CheckSubItem) {
+    return this.subItemScoreHistory$.pipe(
+      map(list =>
+        list.filter(scoreItem => scoreItem.check_sub_id === subItem.duty_check_sub_item_config_id)
+      ),
+      take(1)
+    )
+  }
+
   openSelectGrade(event) {
-    console.log('TCL: DutyPage -> openSelectGrade -> event', event)
     this.gradeSelect.open(event)
   }
 
-  onGradeChange(event) {
-    const grade = this.grades.filter(e => e.value === this.gradeValue)[0]
-    if (grade) {
-      this.currentGrade = grade
-    }
-  }
-
-  ngOnInit() {
-    this.loadGrades()
-    this.loadDeductionCategory()
-
-    this.getSubItemScoreHistory()
-    this.subItemScoreHistory$
-      .pipe(
-        tap(resTap => {
-          console.log('TCL: HistoryPage -> ngOnInit -> res mmmmmmm', resTap)
-        })
-      )
-      .subscribe()
-  }
-
   setInitData() {
-    this.setFirstGrade()
-    this.setFirstClass()
+    this.setInitGrade()
+    this.setInitClass()
   }
 
-  setFirstGrade() {
+  setInitGrade() {
     const firstGrade = this.grades[0]
 
     if (firstGrade) {
@@ -92,15 +93,18 @@ export class DutyPage implements OnInit, AfterViewInit {
     }
   }
 
-  setFirstClass() {
-    this.currentClass = this.currentGrade.classes[0]
+  setInitClass() {
+    if (
+      this.currentGrade &&
+      this.currentGrade.classList &&
+      this.currentGrade.classList.length > 0
+    ) {
+      this.currentClass = this.currentGrade.classList[0]
+      this.classSubject$.next(this.currentClass)
+    }
   }
 
-  getSubItemScoreHistory() {
-    this.subItemScoreHistory$ = from(dbService.subItemScoreHistory(1))
-  }
-
-  openSelectScorePopover(deductionOption: DeductionModified) {
+  openSelectScorePopover(subItem: CheckSubItem) {
     const popover = this.popoverService
       .openPopover({
         component: SelectScoreModalComponent,
@@ -108,58 +112,55 @@ export class DutyPage implements OnInit, AfterViewInit {
         backdropDismiss: false
       })
       .then(res => {
-        res.onDidDismiss().then(detail => {
-          const score = detail.data
+        return res.onDidDismiss()
+      })
+      .then(detail => {
+        const score = detail.data
 
-          // modify score
-          if (score && score !== 0) {
-            deductionOption.score = score
-          }
-        })
+        // modify score
+        if (score && score !== 0) {
+          subItem.scoreChange = score
+        }
       })
   }
 
   submit(category: DeductionCatetoryModified, option: DeductionModified) {
-    const data: DeductionPost = {
-      autograph: '',
-      checkSub: [
-        {
-          addressList: [],
-          change_score: -option.score,
-          check_sub_id: option.deductionOption.id,
-          check_sub_name: option.deductionOption.rule,
-          is_media: 1
-        }
-      ],
-      check_id: category.id,
-      check_name: category.category,
-      class_id: this.currentClass.id
-    }
-
-    console.log('TCL: DutyPage -> submit -> data', data)
-
-    dbService
-      .saveScore(data)
-      .then(() => {
-        this.toastService.showToast({
-          message: '您已经成功提交本次值周记录！',
-          showCloseButton: true,
-          closeButtonText: '关闭',
-          color: 'success',
-          duration: 2000
-        })
-
-        this.resetSubItem(option)
-      })
-      .catch(error => {
-        this.toastService.showToast({
-          message: '提交失败！出现意外错误，请稍后再试.',
-          showCloseButton: true,
-          closeButtonText: '关闭',
-          color: 'danger',
-          duration: 2000
-        })
-      })
+    // const data: DeductionPost = {
+    //   autograph: '',
+    //   checkSub: [
+    //     {
+    //       addressList: [],
+    //       change_score: -option.score,
+    //       check_sub_id: option.deductionOption.id,
+    //       check_sub_name: option.deductionOption.rule,
+    //       is_media: 1
+    //     }
+    //   ],
+    //   check_id: category.id,
+    //   check_name: category.category,
+    //   class_id: this.currentClass.id
+    // }
+    // dbService
+    //   .saveScore(data)
+    //   .then(() => {
+    //     this.toastService.showToast({
+    //       message: '您已经成功提交本次值周记录！',
+    //       showCloseButton: true,
+    //       closeButtonText: '关闭',
+    //       color: 'success',
+    //       duration: 2000
+    //     })
+    //     this.resetSubItem(option)
+    //   })
+    //   .catch(error => {
+    //     this.toastService.showToast({
+    //       message: '提交失败！出现意外错误，请稍后再试.',
+    //       showCloseButton: true,
+    //       closeButtonText: '关闭',
+    //       color: 'danger',
+    //       duration: 2000
+    //     })
+    //   })
   }
 
   resetSubItem(subItem: DeductionModified) {
@@ -167,26 +168,9 @@ export class DutyPage implements OnInit, AfterViewInit {
     subItem.imgUrls = []
   }
 
-  loadDeductionCategory() {
+  loadCheckItems() {
     dbService.allItemList().then(itemList => {
-      this.deductionCatogoryListModified = itemList.map(item => {
-        return {
-          id: item.item.duty_check_item_config_id,
-          category: item.item.check_name,
-          deductionOptions: item.subItemArr.map(subItem => {
-            return {
-              score: 0,
-              imgUrls: [],
-              deductionOption: {
-                id: subItem.duty_check_sub_item_config_id,
-                label: subItem.duty_check_sub_item_config_id,
-                rule: subItem.name,
-                value: subItem.duty_check_sub_item_config_id
-              }
-            } as DeductionModified
-          })
-        } as DeductionCatetoryModified
-      })
+      this.checkItems = itemList
     })
   }
 
@@ -200,19 +184,7 @@ export class DutyPage implements OnInit, AfterViewInit {
             .classesList(grade.grade)
             .then(convertToArray)
             .then(classList => {
-              // convert Grade to GradeVo
-              this.grades.push({
-                label: grade.grade,
-                classes: classList.map(aClass => {
-                  // convert AClass to AClassVo
-                  return {
-                    label: aClass.name,
-                    value: aClass.class_id,
-                    id: aClass.class_id
-                  } as AClassVo
-                }),
-                value: grade.grade
-              })
+              this.grades.push({ ...grade, classList })
 
               this.setInitData()
             })
@@ -220,7 +192,8 @@ export class DutyPage implements OnInit, AfterViewInit {
       })
   }
 
-  setClass(aclass: AClassVo) {
+  setClass(aclass: AClass) {
     this.currentClass = aclass
+    this.classSubject$.next(this.currentClass)
   }
 }

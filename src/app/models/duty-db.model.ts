@@ -1,9 +1,10 @@
 export interface Grade {
-  id: number
-  class_id: number
-  school_id: number
+  id?: number
+  class_id?: number
+  school_id?: number
   grade: string
-  name: string
+  name?: string
+  classList?: AClass[]
 }
 
 export interface AClass {
@@ -19,7 +20,7 @@ export interface DeviceConfig {
   del: number
 }
 
-export interface DutyCheckItem {
+export interface CheckItem {
   id: number
   duty_check_item_config_id: number
   school_id: number
@@ -29,9 +30,10 @@ export interface DutyCheckItem {
   create_time: string
   update_time: string
   deleted: number
+  checkSubItems?: CheckSubItem[]
 }
 
-export interface DutyCheckSubItem {
+export interface CheckSubItem {
   id: number
   duty_check_item_config_id: number
   duty_check_sub_item_config_id: number
@@ -43,6 +45,7 @@ export interface DutyCheckSubItem {
   create_time: string
   update_time: string
   deleted: number
+  scoreChange?: number
 }
 
 export interface DutyMedia {
@@ -71,7 +74,7 @@ export interface DutyHistoryItem {
   status: number
 }
 
-export interface SubItemScoreHistory {
+export interface SubItemScoreHistoryItem {
   check_sub_id: number
   change_score: number
   create_time: string
