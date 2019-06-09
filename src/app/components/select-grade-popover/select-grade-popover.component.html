@@ -1,0 +1,7 @@
+<ion-list>
+  <ion-item *ngFor="let grade of grades" (tap)="onGradeChange(grade)" button>
+    <ion-label>
+      {{ grade.grade }}
+    </ion-label>
+  </ion-item>
+</ion-list>

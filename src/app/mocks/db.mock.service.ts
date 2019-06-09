@@ -3,14 +3,16 @@ import {
   CheckItem,
   CheckSubItem,
   Grade,
-  SubItemScoreHistoryItem
+  SubItemScoreHistoryItem,
+  DutyHistoryItem
 } from '../models/duty-db.model'
 import {
   checkItemList,
   checkSubItemList,
   classList,
   gradeList,
-  subItemScoreHistoryAllClass
+  subItemScoreHistoryAllClass,
+  dutyHistoryItemList
 } from './duty.mock'
 
 function convertToObject<T>(arr: T[]) {
@@ -91,6 +93,7 @@ export class DbService {
     })
   }
 
+  // 最近7天
   subItemScoreHistory(classId: number): Promise<SubItemScoreHistoryItem[]> {
     return new Promise((resolve, reject) => {
       resolve(subItemScoreHistoryAllClass[classId] || [])
@@ -107,15 +110,15 @@ export class DbService {
   //  * @returns {string} 格式化后的时间
   //  */
 
-  // /**
-  //  * 查询pad的扣分记录
-  //  * @param type 为0时查询未上传的记录，不传时查询所有
-  //  */
-  // historyList(type?: 0): Promise<DutyHistoryItem[]> {
-  //   return new Promise((resolve, reject) => {
-
-  //   })
-  // }
+  /**
+   * 查询pad的扣分记录
+   * @param type 为0时查询未上传的记录，不传时查询所有
+   */
+  historyList(type?: 0): Promise<DutyHistoryItem[]> {
+    return new Promise((resolve, reject) => {
+      resolve(dutyHistoryItemList)
+    })
+  }
 
   // /**
   //  * 批量上传或者单个上传
@@ -134,6 +137,8 @@ export class DbService {
 
   //   })
   // }
+
+  synchronizationData() {}
 }
 
 export const dbService = new DbService()

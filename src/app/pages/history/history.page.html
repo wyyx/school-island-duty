@@ -1,76 +1,86 @@
 <ion-content>
-  <ion-card [hidden]="showImgViewer">
-    <ion-grid class="ion-padding">
-      <!-- header -->
-      <ion-row class="header text-center ion-padding ">
-        <ion-col>
-          时间
-        </ion-col>
+  <ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="12" size-lg="8" size-xl="6">
+        <ion-card [hidden]="showImgViewer">
+          <ion-grid class="ion-padding">
+            <!-- header -->
+            <ion-row class="header text-center ion-padding ">
+              <ion-col>
+                时间
+              </ion-col>
 
-        <ion-col>
-          班级
-        </ion-col>
+              <ion-col>
+                班级
+              </ion-col>
 
-        <ion-col>
-          扣分
-        </ion-col>
+              <ion-col>
+                扣分
+              </ion-col>
 
-        <ion-col>
-          描述
-        </ion-col>
+              <ion-col>
+                描述
+              </ion-col>
 
-        <ion-col>
-          状态
-          <ion-button (tap)="syncDb()">
-            <span>
-              点击上传
-            </span>
-            <ion-icon slot="end" size="large" name="cloud-upload"></ion-icon>
-          </ion-button>
-        </ion-col>
-        <div class="header-divider"></div>
-      </ion-row>
+              <ion-col>
+                状态
+                <ion-button (tap)="syncDb()">
+                  <span>
+                    点击上传
+                  </span>
+                  <ion-icon slot="end" size="large" name="cloud-upload"></ion-icon>
+                </ion-button>
+              </ion-col>
+              <div class="header-divider"></div>
+            </ion-row>
 
-      <ion-row *ngFor="let dutyHistory of dutyHistoryList" class="text-center ion-padding">
-        <ion-col>
-          <ion-row>
-            <ion-col>
-              <span class="time">
-                {{ getTime(dutyHistory.create_time) }}
-              </span>
-            </ion-col>
-            <ion-col> {{ getDate(dutyHistory.create_time) }} </ion-col>
-          </ion-row>
-        </ion-col>
+            <ion-row *ngFor="let dutyHistory of dutyHistoryList" class="text-center ion-padding">
+              <ion-col>
+                <ion-row>
+                  <ion-col>
+                    <span class="time">
+                      {{ getTime(dutyHistory.create_time) }}
+                    </span>
+                  </ion-col>
+                  <ion-col> {{ getDate(dutyHistory.create_time) }} </ion-col>
+                </ion-row>
+              </ion-col>
 
-        <ion-col>
-          {{ dutyHistory.class_name }}
-        </ion-col>
+              <ion-col>
+                {{ dutyHistory.class_name }}
+              </ion-col>
 
-        <ion-col>
-          {{ dutyHistory.change_score }}
-        </ion-col>
+              <ion-col>
+                {{ dutyHistory.change_score }}
+              </ion-col>
 
-        <ion-col>
-          <ion-row class="ion-wrap clickable" (tap)="openImgViewer(dutyHistory.media_address)">
-            <ion-col *ngFor="let img of dutyHistory.media_address" class="img-wrapper">
-              <img [src]="img" class="image" />
-            </ion-col>
-          </ion-row>
-        </ion-col>
+              <ion-col>
+                <ion-row
+                  class="ion-wrap clickable ion-justify-content-center"
+                  (tap)="openImgViewer(dutyHistory.media_address)"
+                >
+                  <ion-col *ngFor="let img of dutyHistory.media_address" class="img-wrapper shrink">
+                    <img [src]="img" class="image" />
+                  </ion-col>
+                </ion-row>
+              </ion-col>
 
-        <ion-col>
-          <ng-container *ngIf="dutyHistory.status === 0; else elseTemplate">
-            <span class="success-text">已上传</span>
-          </ng-container>
-          <ng-template #elseTemplate>
-            <span class="danger-text">未上传</span>
-          </ng-template>
-        </ion-col>
-        <ion-item-divider> </ion-item-divider>
-      </ion-row>
-    </ion-grid>
-  </ion-card>
+              <ion-col>
+                <ng-container *ngIf="dutyHistory.status === 0; else elseTemplate">
+                  <span class="success-text">已上传</span>
+                </ng-container>
+                <ng-template #elseTemplate>
+                  <span class="danger-text">未上传</span>
+                </ng-template>
+              </ion-col>
+              <ion-item-divider> </ion-item-divider>
+            </ion-row>
+          </ion-grid>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
   <div class="sliders-wrapper" *ngIf="showImgViewer" @slideScaleAnim>
     <ion-slides class="sliders" pager="true" [options]="slideOpts">
       <ion-slide *ngFor="let img of slideImgs" (tap)="tapSlideImg()">

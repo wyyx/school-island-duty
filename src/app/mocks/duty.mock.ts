@@ -4,7 +4,8 @@ import {
   AClass,
   CheckItem,
   CheckSubItem,
-  SubItemScoreHistoryItem
+  SubItemScoreHistoryItem,
+  DutyHistoryItem
 } from '../models/duty-db.model'
 
 export const dutyHistoryList: DutyHistory[] = [
@@ -144,7 +145,8 @@ export const checkSubItemList: CheckSubItem[] = [
     score: 15,
     create_time: '2019-7-11 11:55',
     update_time: '2019-7-23 9:46',
-    deleted: 1
+    deleted: 1,
+    addressList: []
   },
   {
     id: 0,
@@ -157,7 +159,8 @@ export const checkSubItemList: CheckSubItem[] = [
     score: 15,
     create_time: '2019-7-11 11:55',
     update_time: '2019-7-23 9:46',
-    deleted: 1
+    deleted: 1,
+    addressList: []
   },
   {
     id: 0,
@@ -170,7 +173,8 @@ export const checkSubItemList: CheckSubItem[] = [
     score: 15,
     create_time: '2019-7-11 11:55',
     update_time: '2019-7-23 9:46',
-    deleted: 1
+    deleted: 1,
+    addressList: []
   },
   {
     id: 0,
@@ -183,7 +187,8 @@ export const checkSubItemList: CheckSubItem[] = [
     score: 15,
     create_time: '2019-7-11 11:55',
     update_time: '2019-7-23 9:46',
-    deleted: 1
+    deleted: 1,
+    addressList: []
   },
   {
     id: 0,
@@ -196,7 +201,8 @@ export const checkSubItemList: CheckSubItem[] = [
     score: 15,
     create_time: '2019-7-11 11:55',
     update_time: '2019-7-23 9:46',
-    deleted: 1
+    deleted: 1,
+    addressList: []
   }
 ]
 
@@ -207,31 +213,31 @@ export const subItemScoreHistoryAllClass: { [key: number]: SubItemScoreHistoryIt
       check_sub_id: 10,
       create_time: '2019-7-11 11:55',
       media_address: [
-        'https://picsum.photos/id/124/200/300',
-        'https://picsum.photos/id/555/200/300',
-        'https://picsum.photos/id/1053/200/300'
+        'https://picsum.photos/id/124/600/900',
+        'https://picsum.photos/id/555/600/900',
+        'https://picsum.photos/id/1053/600/900'
       ]
     },
     {
       change_score: -3,
       check_sub_id: 10,
       create_time: '2019-7-13 10:08',
-      media_address: ['https://picsum.photos/id/555/200/300']
+      media_address: ['https://picsum.photos/id/555/600/900']
     },
     {
       change_score: -8.5,
       check_sub_id: 10,
       create_time: '2019-7-14 15:30',
       media_address: [
-        'https://picsum.photos/id/678/200/300',
-        'https://picsum.photos/id/329/200/300'
+        'https://picsum.photos/id/678/600/900',
+        'https://picsum.photos/id/330/600/900'
       ]
     },
     {
       change_score: -2,
       check_sub_id: 11,
       create_time: '2019-7-20 16:49',
-      media_address: ['https://picsum.photos/id/44/200/300', 'https://picsum.photos/id/736/200/300']
+      media_address: ['https://picsum.photos/id/44/600/900', 'https://picsum.photos/id/736/600/900']
     }
   ],
   2: [
@@ -239,13 +245,53 @@ export const subItemScoreHistoryAllClass: { [key: number]: SubItemScoreHistoryIt
       change_score: -9,
       check_sub_id: 11,
       create_time: '2019-7-20 16:49',
-      media_address: ['https://picsum.photos/id/44/200/300', 'https://picsum.photos/id/736/200/300']
+      media_address: ['https://picsum.photos/id/44/600/900', 'https://picsum.photos/id/736/600/900']
     },
     {
       change_score: -11.5,
       check_sub_id: 11,
       create_time: '2019-7-22 9:38',
-      media_address: ['https://picsum.photos/id/44/200/300', 'https://picsum.photos/id/736/200/300']
+      media_address: [
+        'https://picsum.photos/id/889/600/900',
+        'https://picsum.photos/id/900/600/900'
+      ]
     }
   ]
 }
+
+export const dutyHistoryItemList: DutyHistoryItem[] = [
+  {
+    id: 1,
+    uuid: 346345736546756,
+    school_id: 1,
+    class_id: 1,
+    class_name: '2015级五班',
+    duty_history_id: 101,
+    type: 1,
+    media_address: [
+      'https://picsum.photos/id/44/600/900',
+      'https://picsum.photos/id/736/600/900',
+      'https://picsum.photos/id/890/600/900'
+    ],
+    create_time: '2019-7-20 16:49',
+    update_time: '2019-7-21 20:35',
+    deleted: 0,
+    change_score: -5.5,
+    status: 0
+  },
+  {
+    id: 2,
+    uuid: 46356745685678,
+    school_id: 1,
+    class_id: 2,
+    class_name: '2015级七班',
+    duty_history_id: 101,
+    type: 1,
+    media_address: ['https://picsum.photos/id/18/600/900'],
+    create_time: '2019-7-20 16:49',
+    update_time: '2019-7-21 20:35',
+    deleted: 0,
+    change_score: -8,
+    status: 1
+  }
+]

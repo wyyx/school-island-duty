@@ -15,6 +15,8 @@ import { SelectDutyModalComponent } from './components/select-duty-modal/select-
 import { environment } from 'src/environments/environment'
 import { HttpClientModule } from '@angular/common/http'
 import { IonicStorageModule } from '@ionic/storage'
+import { WeekHistoryModalComponent } from './components/week-history-modal/week-history-modal.component'
+import { SelectGradePopoverComponent } from './components/select-grade-popover/select-grade-popover.component'
 
 export const BASE_URL = new InjectionToken<string>('App base url')
 
@@ -23,9 +25,16 @@ export const BASE_URL = new InjectionToken<string>('App base url')
     AppComponent,
     SelectScoreModalComponent,
     ScoreSelectorComponent,
-    SelectDutyModalComponent
+    SelectDutyModalComponent,
+    WeekHistoryModalComponent,
+    SelectGradePopoverComponent
   ],
-  entryComponents: [SelectScoreModalComponent, SelectDutyModalComponent],
+  entryComponents: [
+    SelectScoreModalComponent,
+    SelectDutyModalComponent,
+    WeekHistoryModalComponent,
+    SelectGradePopoverComponent
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

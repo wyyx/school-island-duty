@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { IonSelect } from '@ionic/angular'
-import { Observable, BehaviorSubject, from } from 'rxjs'
+import { BehaviorSubject, from, Observable, of } from 'rxjs'
+import { switchMap } from 'rxjs/operators'
 import { listAnim } from 'src/app/animations/list.anim'
 import { SelectScoreModalComponent } from 'src/app/components/select-score-modal/select-score-modal.component'
+import { WeekHistoryModalComponent } from 'src/app/components/week-history-modal/week-history-modal.component'
 // import { dbService } from 'src/app/storage/db.service'
 import { dbService } from 'src/app/mocks/db.mock.service'
 import {
@@ -13,10 +15,10 @@ import {
   SubItemScoreHistoryItem
 } from 'src/app/models/duty-db.model'
 import { DeductionCatetoryModified, DeductionModified } from 'src/app/models/duty.model'
+import { ModalService } from 'src/app/services/modal.service'
 import { PopoverService } from 'src/app/services/popover.service'
 import { ToastService } from 'src/app/services/toast.service'
 import { convertToArray } from 'src/app/utils/sql.util'
-import { switchMap, map, filter, take } from 'rxjs/operators'
 
 const SIZE_PRE_SLIDE = 5
 
@@ -34,10 +36,11 @@ export class DutyPage implements OnInit, AfterViewInit {
   currentClass: AClass = {} as AClass
 
   checkItems: CheckItem[] = []
-  classSubject$ = new BehaviorSubject<AClass>(null)
-  currentClass$ = this.classSubject$.asObservable()
+  currentClassSubject$ = new BehaviorSubject<AClass>(null)
+  currentClass$ = this.currentClassSubject$.asObservable()
 
   subItemScoreHistory$: Observable<SubItemScoreHistoryItem[]>
+  subItemScoreHistory: SubItemScoreHistoryItem[] = []
 
   slideOpts = {
     initialSlide: 0,
@@ -51,33 +54,77 @@ export class DutyPage implements OnInit, AfterViewInit {
       : '未选班级'
   }
 
-  constructor(private popoverService: PopoverService, private toastService: ToastService) {}
+  constructor(
+    private popoverService: PopoverService,
+    private toastService: ToastService,
+    private modalService: ModalService
+  ) {}
 
   ngOnInit() {
     this.loadGrades()
     this.loadCheckItems()
+
     this.subItemScoreHistory$ = this.currentClass$.pipe(
       switchMap(aclass => {
         console.log('TCL: DutyPage -> ngOnInit -> aclass', aclass)
-        return from(dbService.subItemScoreHistory(aclass.class_id))
-      }),
-      map(list => list || [])
+        return aclass ? from(dbService.subItemScoreHistory(aclass.class_id)) : of([])
+      })
     )
+
+    this.subItemScoreHistory$.subscribe(list => {
+      this.subItemScoreHistory = list
+    })
   }
 
   ngAfterViewInit(): void {}
 
   getSubItemScoreHistory(subItem: CheckSubItem) {
-    return this.subItemScoreHistory$.pipe(
-      map(list =>
-        list.filter(scoreItem => scoreItem.check_sub_id === subItem.duty_check_sub_item_config_id)
-      ),
-      take(1)
+    return this.subItemScoreHistory.filter(
+      scoreItem => scoreItem.check_sub_id === subItem.duty_check_sub_item_config_id
     )
   }
 
   openSelectGrade(event) {
     this.gradeSelect.open(event)
+  }
+
+  onGradeChange(event) {
+    this.currentClass = this.currentGrade.classList && this.currentGrade.classList[0]
+    this.currentClassSubject$.next(this.currentClass)
+  }
+
+  openWeekHistoryModal(subItem: CheckSubItem) {
+    this.modalService.openModal({
+      component: WeekHistoryModalComponent,
+      componentProps: {
+        subItemScoreHistory: this.subItemScoreHistory.filter(
+          e => e.check_sub_id === subItem.duty_check_sub_item_config_id
+        )
+      }
+    })
+  }
+
+  loadGrades() {
+    dbService
+      .gradeList()
+      .then(convertToArray)
+      .then(gradeList => {
+        gradeList.forEach(grade => {
+          dbService
+            .classesList(grade.grade)
+            .then(convertToArray)
+            .then(classList => {
+              this.grades.push({ ...grade, classList })
+
+              this.setInitData()
+            })
+        })
+      })
+  }
+
+  setClass(aclass: AClass) {
+    this.currentClass = aclass
+    this.currentClassSubject$.next(this.currentClass)
   }
 
   setInitData() {
@@ -100,7 +147,7 @@ export class DutyPage implements OnInit, AfterViewInit {
       this.currentGrade.classList.length > 0
     ) {
       this.currentClass = this.currentGrade.classList[0]
-      this.classSubject$.next(this.currentClass)
+      this.currentClassSubject$.next(this.currentClass)
     }
   }
 
@@ -163,6 +210,11 @@ export class DutyPage implements OnInit, AfterViewInit {
     //   })
   }
 
+  clear(item: CheckItem, subItem: CheckSubItem) {
+    subItem.scoreChange = 0
+    subItem.addressList = []
+  }
+
   resetSubItem(subItem: DeductionModified) {
     subItem.score = 0
     subItem.imgUrls = []
@@ -172,28 +224,5 @@ export class DutyPage implements OnInit, AfterViewInit {
     dbService.allItemList().then(itemList => {
       this.checkItems = itemList
     })
-  }
-
-  loadGrades() {
-    dbService
-      .gradeList()
-      .then(convertToArray)
-      .then(gradeList => {
-        gradeList.forEach(grade => {
-          dbService
-            .classesList(grade.grade)
-            .then(convertToArray)
-            .then(classList => {
-              this.grades.push({ ...grade, classList })
-
-              this.setInitData()
-            })
-        })
-      })
-  }
-
-  setClass(aclass: AClass) {
-    this.currentClass = aclass
-    this.classSubject$.next(this.currentClass)
   }
 }

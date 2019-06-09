@@ -46,13 +46,14 @@ export interface CheckSubItem {
   update_time: string
   deleted: number
   scoreChange?: number
+  addressList: string[]
 }
 
 export interface DutyMedia {
   id: number
   duty_history_id: number
   type: number
-  media_address: string
+  media_address: string[]
   create_time: string
   update_time: string
   deleted: number
@@ -66,7 +67,7 @@ export interface DutyHistoryItem {
   class_name: string
   duty_history_id: number
   type: number
-  media_address: string
+  media_address: string[]
   create_time: string
   update_time: string
   deleted: number
