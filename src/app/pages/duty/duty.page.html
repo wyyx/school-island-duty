@@ -5,6 +5,9 @@
       <ion-col class="left" size="2">
         <div>
           <ion-list>
+            <!-- <div (tap)="openSelectGrade($event)">
+              xxxxxxxxxx
+            </div> -->
             <ion-item (tap)="openSelectGrade($event)" button>
               <ion-label class="pr-10">
                 {{ currentGrade.grade }}
@@ -85,7 +88,7 @@
                     <!-- standard -->
                     <ion-col class="grow standard-col">
                       <p class="rule-description ion-no-margin">
-                        {{ subItem.description }}
+                        {{ subItem.name }}
                       </p>
                     </ion-col>
                     <!-- score -->
@@ -105,9 +108,53 @@
                     </ion-col>
                     <!-- take pictures -->
                     <ion-col class="shrink">
-                      <ion-button class="operation-btn" color="light">
-                        <ion-icon color="darkgrey" size="large" name="camera"></ion-icon>
-                      </ion-button>
+                      <div>
+                        <ion-button class="operation-btn" color="light" (tap)="showActionSheet()">
+                          <ion-icon color="darkgrey" size="large" name="camera"></ion-icon>
+                        </ion-button>
+                      </div>
+                      <div>
+                        <ion-col>
+                          <ion-row
+                            class="ion-wrap clickable ion-justify-content-center"
+                            (tap)="openImgViewer(subItem.addressList)"
+                          >
+                            <ion-col
+                              *ngFor="let img of subItem.addressList"
+                              class="img-wrapper shrink"
+                            >
+                              <img [src]="img" class="image" />
+                            </ion-col>
+                          </ion-row>
+
+                          <!-- mock pictures -->
+                          <!-- <ion-row
+                          class="ion-wrap clickable ion-justify-content-center"
+                          (tap)="
+                            openImgViewer([
+                              'https://picsum.photos/id/906/600/900',
+                              'https://picsum.photos/id/800/600/900',
+                              'https://picsum.photos/id/908/600/900',
+                              'https://picsum.photos/id/813/600/900'
+                            ])
+                          "
+                        >
+                          <ion-col
+                            *ngFor="
+                              let img of [
+                                'https://picsum.photos/id/906/600/900',
+                                'https://picsum.photos/id/800/600/900',
+                                'https://picsum.photos/id/908/600/900',
+                                'https://picsum.photos/id/813/600/900'
+                              ]
+                            "
+                            class="img-wrapper shrink"
+                          >
+                            <img [src]="img" class="image" />
+                          </ion-col>
+                        </ion-row> -->
+                        </ion-col>
+                      </div>
                     </ion-col>
                   </ion-row>
                   <ion-row>
@@ -147,4 +194,11 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+  <div class="sliders-wrapper" *ngIf="showImgViewer" @slideScaleAnim>
+    <ion-slides class="sliders" pager="true" [options]="slideOpts">
+      <ion-slide *ngFor="let img of slideImgs" (tap)="tapSlideImg()">
+        <img [src]="img" class="slide-img" />
+      </ion-slide>
+    </ion-slides>
+  </div>
 </ion-content>

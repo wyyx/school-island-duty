@@ -3,8 +3,8 @@ import * as moment from 'moment'
 import { slideScaleAnim } from 'src/app/animations/slide-scale.anim'
 import { DutyHistoryItem } from 'src/app/models/duty-db.model'
 import { DutyService } from 'src/app/services/duty.service'
-// import { dbService } from 'src/app/storage/db.service'
-import { dbService } from 'src/app/mocks/db.mock.service'
+import { dbService } from 'src/app/storage/db.service'
+// import { dbService } from 'src/app/mocks/db.mock.service'
 
 moment.locale('zh-CN')
 
@@ -23,21 +23,44 @@ export class HistoryPage implements OnInit {
 
   slideImgs: string[] = []
   showImgViewer = false
+  needUpload = false
 
   constructor(private dutyService: DutyService) {}
 
   ngOnInit() {
     this.loadDutyHistoryList()
+    this.upload()
+    this.intervalUpload()
   }
 
-  syncDb() {
-    dbService.synchronizationData()
+  ionViewWillEnter() {
+    this.loadDutyHistoryList()
+  }
+
+  intervalUpload() {
+    setInterval(() => {
+      if (this.needUpload) {
+        this.upload()
+      }
+    }, 1800000)
+  }
+
+  upload() {
+    console.log('uploading')
+    dbService.upload().then(() => {
+      this.loadDutyHistoryList()
+    })
   }
 
   loadDutyHistoryList() {
     dbService.historyList().then(res => {
-      console.log('TCL: HistoryPage -> loadDutyHistoryList -> res xxxxxxxxxxxxxxxxxxxxxxx', res)
       this.dutyHistoryList = res
+
+      this.dutyHistoryList.forEach(historyItem => {
+        if (historyItem.status === 0) {
+          this.needUpload = true
+        }
+      })
     })
   }
 

@@ -6,8 +6,10 @@ import {
   CheckSubItem,
   SubItemScoreHistoryItem,
   DeductionPost,
-  DutyHistoryItem
+  DutyHistoryItem,
+  SubItemScoreHistory
 } from '../models/duty-db.model'
+import { environment } from 'src/environments/environment'
 
 const deviceCode = '1-002'
 const password = '579814'
@@ -19,6 +21,11 @@ declare let openDatabase: any
 export class DbService {
   initDb() {
     this.Onload()
+
+    console.log('TCL: DbService -> initDb -> environment.production', environment.production)
+    if (environment.production) {
+      this.resetDb()
+    }
 
     // this.resetDb()
   }
@@ -117,107 +124,188 @@ export class DbService {
    */
   synchronizationData() {
     // 同步数据
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        function(context) {
+          context.executeSql('SELECT * FROM config', [], function(tx, rs) {
+            const config = rs.rows[0]
 
-    db.transaction(
-      function(context) {
-        context.executeSql('SELECT * FROM config', [], function(tx, rs) {
-          const config = rs.rows[0]
-
-          if (config == null) {
-            return
-          }
-
-          $.ajax({
-            type: 'POST',
-            url: `${IP}/w/pad/init-data`,
-            dataType: 'json',
-            async: false,
-            contentType: 'application/json;charset=UTF-8',
-            data: JSON.stringify({
-              codeId: config.key
-            }),
-            success(data) {
-              if (data == null) {
-                return
-              }
-              /*修改pad密码，修改学校id和学校名字*/
-              context.executeSql(`UPDATE config SET val="${data.content.padPassword}"`)
-
-              context.executeSql('DROP TABLE school')
-              context.executeSql('DROP TABLE class')
-              context.executeSql('DROP TABLE duty_check_item_config')
-              context.executeSql('DROP TABLE duty_check_sub_item_config')
-
-              context.executeSql(
-                'CREATE TABLE "school" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"school_id" INTEGER,"school_name" text(100));'
-              )
-              context.executeSql(
-                'CREATE TABLE "class" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"class_id" INTEGER,"school_id" INTEGER,"grade" TEXT,"name" TEXT);'
-              )
-              context.executeSql(
-                'CREATE TABLE "duty_check_item_config" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_check_item_config_id" integer,"school_id" integer,"check_name" TEXT(50),"check_score" real(8,3),"description" TEXT,"create_time" TEXT,"update_time" TEXT,"deleted" integer DEFAULT 0);'
-              )
-              context.executeSql(
-                'CREATE TABLE "duty_check_sub_item_config" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_check_sub_item_config_id" INTEGER,"school_id" INTEGER,"duty_check_item_config_id" INTEGER,"name" TEXT,"priority" integer,"description" TEXT,"score" real,"create_time" TEXT,"update_time" TEXT,"deleted" integer DEFAULT 0);'
-              )
-
-              context.executeSql(
-                `INSERT INTO school(school_id,school_name) VALUES(${data.content.schoolId},"${
-                  data.content.schoolName
-                }")`
-              )
-              // context.executeSql(`UPDATE school SET school_id=${data.content.schoolId},school_name="${data.content.schoolName}"`);
-
-              const classes = data.content.classes
-              if (classes != null) {
-                for (let i = 0; i < classes.length; i++) {
-                  const sql = `INSERT INTO class(class_id,school_id,grade,name) VALUES(${
-                    classes[i].id
-                  },${classes[i].schoolId},"${classes[i].grade}","${classes[i].name}")`
-                  console.log(sql)
-                  context.executeSql(sql)
-                }
-              }
-
-              const checkItems = data.content.checkItems
-              const date = timeStamp2String(new Date().getTime())
-              if (checkItems != null) {
-                for (let i = 0; i < checkItems.length; i++) {
-                  const sql = `INSERT INTO duty_check_item_config(duty_check_item_config_id,school_id,check_name,check_score,description,create_time,update_time) VALUES(${
-                    checkItems[i].id
-                  },${checkItems[i].schoolId},"${checkItems[i].checkName}",${
-                    checkItems[i].checkScore
-                  },"${checkItems[i].description}","${date}","${date}")`
-                  console.log(sql)
-                  context.executeSql(sql)
-                }
-              }
-
-              const subCheckItems = data.content.subCheckItems
-              if (subCheckItems != null) {
-                for (let i = 0; i < subCheckItems.length; i++) {
-                  const sql = `INSERT INTO duty_check_sub_item_config(duty_check_sub_item_config_id,school_id,duty_check_item_config_id,name,priority,description,score,create_time,update_time) VALUES(${
-                    subCheckItems[i].id
-                  },${subCheckItems[i].schoolId},${subCheckItems[i].dutyCheckItemConfigId},"${
-                    subCheckItems[i].name
-                  }",${subCheckItems[i].priority},"${subCheckItems[i].description}",${
-                    subCheckItems[i].score
-                  },"${date}","${date}")`
-                  console.log(sql)
-                  context.executeSql(sql)
-                }
-              }
+            if (config == null) {
+              return
             }
+
+            $.ajax({
+              type: 'POST',
+              url: `${IP}/w/pad/init-data`,
+              dataType: 'json',
+              async: false,
+              contentType: 'application/json;charset=UTF-8',
+              data: JSON.stringify({
+                codeId: config.key
+              }),
+              success(data) {
+                if (data == null) {
+                  return
+                }
+                /*修改pad密码，修改学校id和学校名字*/
+                context.executeSql(`UPDATE config SET val="${data.content.padPassword}"`)
+
+                context.executeSql('DROP TABLE school')
+                context.executeSql('DROP TABLE class')
+                context.executeSql('DROP TABLE duty_check_item_config')
+                context.executeSql('DROP TABLE duty_check_sub_item_config')
+
+                context.executeSql(
+                  'CREATE TABLE "school" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"school_id" INTEGER,"school_name" text(100));'
+                )
+                context.executeSql(
+                  'CREATE TABLE "class" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"class_id" INTEGER,"school_id" INTEGER,"grade" TEXT,"name" TEXT);'
+                )
+                context.executeSql(
+                  'CREATE TABLE "duty_check_item_config" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_check_item_config_id" integer,"school_id" integer,"check_name" TEXT(50),"check_score" real(8,3),"description" TEXT,"create_time" TEXT,"update_time" TEXT,"deleted" integer DEFAULT 0);'
+                )
+                context.executeSql(
+                  'CREATE TABLE "duty_check_sub_item_config" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_check_sub_item_config_id" INTEGER,"school_id" INTEGER,"duty_check_item_config_id" INTEGER,"name" TEXT,"priority" integer,"description" TEXT,"score" real,"create_time" TEXT,"update_time" TEXT,"deleted" integer DEFAULT 0);'
+                )
+
+                context.executeSql(
+                  `INSERT INTO school(school_id,school_name) VALUES(${data.content.schoolId},"${
+                    data.content.schoolName
+                  }")`
+                )
+                // context.executeSql(`UPDATE school SET school_id=${data.content.schoolId},school_name="${data.content.schoolName}"`);
+
+                const classes = data.content.classes
+                if (classes != null) {
+                  for (let i = 0; i < classes.length; i++) {
+                    const sql = `INSERT INTO class(class_id,school_id,grade,name) VALUES(${
+                      classes[i].id
+                    },${classes[i].schoolId},"${classes[i].grade}","${classes[i].name}")`
+                    console.log(sql)
+                    context.executeSql(sql)
+                  }
+                }
+
+                const checkItems = data.content.checkItems
+                const date = timeStamp2String(new Date().getTime())
+                if (checkItems != null) {
+                  for (let i = 0; i < checkItems.length; i++) {
+                    const sql = `INSERT INTO duty_check_item_config(duty_check_item_config_id,school_id,check_name,check_score,description,create_time,update_time) VALUES(${
+                      checkItems[i].id
+                    },${checkItems[i].schoolId},"${checkItems[i].checkName}",${
+                      checkItems[i].checkScore
+                    },"${checkItems[i].description}","${date}","${date}")`
+                    console.log(sql)
+                    context.executeSql(sql)
+                  }
+                }
+
+                const subCheckItems = data.content.subCheckItems
+                if (subCheckItems != null) {
+                  for (let i = 0; i < subCheckItems.length; i++) {
+                    const sql = `INSERT INTO duty_check_sub_item_config(duty_check_sub_item_config_id,school_id,duty_check_item_config_id,name,priority,description,score,create_time,update_time) VALUES(${
+                      subCheckItems[i].id
+                    },${subCheckItems[i].schoolId},${subCheckItems[i].dutyCheckItemConfigId},"${
+                      subCheckItems[i].name
+                    }",${subCheckItems[i].priority},"${subCheckItems[i].description}",${
+                      subCheckItems[i].score
+                    },"${date}","${date}")`
+                    console.log(sql)
+                    context.executeSql(sql)
+                  }
+                }
+
+                resolve()
+              }
+            })
           })
-        })
-      },
-      function(error) {
-        console.log('同步失败:[' + error.message + ']')
-      },
-      function() {
-        console.log('同步成功')
-      }
-    )
+        },
+        function(error) {
+          console.log('同步失败:[' + error.message + ']')
+          reject()
+        },
+        function() {
+          console.log('同步成功')
+        }
+      )
+    })
+  }
+
+  upload() {
+    return new Promise((resolve, reject) => {
+      db.transaction(function(context) {
+        const times = timeStamp2String(getFirstDayOfWeek(new Date()).getTime())
+        context.executeSql(
+          'SELECT * FROM duty_score_history WHERE status = 0 AND create_time > ?',
+          [times],
+          function(tx, results) {
+            /*历史记录的结果集*/
+            const historys = results.rows
+
+            context.executeSql(
+              'SELECT * FROM duty_media WHERE duty_history_id IN (SELECT id FROM duty_score_history WHERE status = 0 AND create_time > ?)',
+              [times],
+              function(tx, rs) {
+                /*媒体的结果集*/
+                const medias = rs.rows
+
+                /*最终返回的实体的数组*/
+                const historyVoArr = []
+
+                for (let i = 0; i < historys.length; i++) {
+                  /*指定一个数组放此记录的媒体地址的集合*/
+                  const picture_urls = []
+
+                  for (let j = 0; j < medias.length; j++) {
+                    /*如果媒体关联id和历史记录的id相同，就保存在此记录的数组中*/
+                    if (historys[i].id == medias[j].duty_history_id) {
+                      picture_urls.push(medias[j].media_address)
+                    }
+                  }
+                  /*最终返回的实体*/
+                  const historyVo = {
+                    uuid: historys[i].uuid.split('.')[0],
+                    schoolId: historys[i].school_id,
+                    classId: historys[i].class_id,
+                    checkId: historys[i].check_id,
+                    checkName: historys[i].check_name,
+                    checkSubId: historys[i].check_sub_id,
+                    checkSubName: historys[i].check_sub_name,
+                    changeScore: historys[i].change_score,
+                    autograph: historys[i].autograph,
+                    createTime: new Date(historys[i].create_time),
+                    pictureUrls: picture_urls
+                  }
+                  historyVoArr.push(historyVo)
+                }
+
+                $.ajax({
+                  type: 'POST',
+                  url: `${IP}/w/score/add`,
+                  dataType: 'json',
+                  async: false,
+                  contentType: 'application/json; charset=utf-8',
+                  data: JSON.stringify(historyVoArr),
+                  success(data) {
+                    if (data.content == true) {
+                      context.executeSql(
+                        'UPDATE duty_score_history SET status = 1 WHERE id IN (SELECT id FROM duty_score_history WHERE status = 0 AND create_time > ?)',
+                        [times]
+                      )
+                    }
+                    console.log('执行成功')
+                    resolve()
+                  },
+                  error() {
+                    console.log('失败')
+                  }
+                })
+              }
+            )
+          }
+        )
+      })
+    })
   }
 
   /**
@@ -281,6 +369,49 @@ export class DbService {
         },
         function() {
           console.log('根据好多级查询班级拉成功')
+        }
+      )
+    })
+  }
+
+  gradeAndClass() {
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        function(context) {
+          context.executeSql('SELECT grade FROM class GROUP BY grade ORDER BY grade', [], function(
+            tx,
+            rs
+          ) {
+            const grades = rs.rows
+
+            console.log(grades[0])
+
+            const gradeAndClasses = []
+
+            let k = 0
+            for (let i = 0; i < grades.length; i++) {
+              context.executeSql(
+                'SELECT class_id,name FROM class WHERE grade = ? ORDER BY name',
+                [grades[k].grade],
+                function(tx, rs) {
+                  const classes = rs.rows
+                  const classArr = []
+                  for (let j = 0; j < classes.length; j++) {
+                    classArr.push(classes[j])
+                  }
+                  const gradeAndClass = { grade: grades[k], classArr }
+                  gradeAndClasses.push(gradeAndClass)
+                  k++
+                }
+              )
+            }
+          })
+        },
+        function(error) {
+          alert('查询年级列表失败')
+        },
+        function() {
+          console.log('查询年级列表成功')
         }
       )
     })
@@ -415,7 +546,7 @@ export class DbService {
     })
   }
 
-  subItemScoreHistory(classId: number): Promise<SubItemScoreHistoryItem[]> {
+  subItemScoreHistory(classId: number): Promise<SubItemScoreHistory[]> {
     return new Promise((resolve, reject) => {
       db.transaction(
         function(context) {
@@ -444,7 +575,10 @@ export class DbService {
                       const checkSubScoreArr = []
 
                       for (let i = 0; i < checkSubIds.length; i++) {
-                        const checkSubDeduction = { check_sub_id: checkSubIds[i], deductionArr: [] }
+                        const checkSubDeduction = {
+                          check_sub_id: checkSubIds[i].duty_check_sub_item_config_id,
+                          deductionArr: []
+                        }
 
                         for (let j = 0; j < historys.length; j++) {
                           if (
@@ -624,7 +758,7 @@ export class DbService {
         context.executeSql(
           'SELECT * FROM duty_score_history WHERE create_time > ? ' +
             fragment +
-            ' ORDER BY create_time',
+            ' ORDER BY create_time DESC',
           [toDay],
           function(tx, rs) {
             const results = rs.rows

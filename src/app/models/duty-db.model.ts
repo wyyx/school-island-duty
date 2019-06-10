@@ -75,6 +75,11 @@ export interface DutyHistoryItem {
   status: number
 }
 
+export interface SubItemScoreHistory {
+  check_sub_id: number
+  deductionArr: SubItemScoreHistoryItem[]
+}
+
 export interface SubItemScoreHistoryItem {
   check_sub_id: number
   change_score: number

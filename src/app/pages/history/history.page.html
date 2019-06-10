@@ -24,7 +24,7 @@
 
               <ion-col>
                 状态
-                <ion-button (tap)="syncDb()">
+                <ion-button (tap)="upload()">
                   <span>
                     点击上传
                   </span>
@@ -67,10 +67,10 @@
 
               <ion-col>
                 <ng-container *ngIf="dutyHistory.status === 0; else elseTemplate">
-                  <span class="success-text">已上传</span>
+                  <span class="danger-text">未上传</span>
                 </ng-container>
                 <ng-template #elseTemplate>
-                  <span class="danger-text">未上传</span>
+                  <span class="success-text">已上传</span>
                 </ng-template>
               </ion-col>
               <ion-item-divider> </ion-item-divider>
