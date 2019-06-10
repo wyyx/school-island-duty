@@ -18,7 +18,7 @@ export class AppComponent {
     private statusBar: StatusBar,
     private router: Router,
     private storage: Storage,
-    private authService: AuthService
+    public authService: AuthService
   ) {
     this.initializeApp()
     dbService.initDb()

@@ -241,6 +241,7 @@ export class DutyPage implements OnInit, AfterViewInit {
         }
       })
   }
+
   showActionSheet(subItem: CheckSubItem) {
     this.presentActionSheet(subItem)
   }
@@ -271,7 +272,7 @@ export class DutyPage implements OnInit, AfterViewInit {
 
   takePicture(sourceType: PictureSourceType, subItem: CheckSubItem) {
     const options: CameraOptions = {
-      quality: 5,
+      quality: 80,
       destinationType: this.camera.DestinationType.FILE_URI,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE,
@@ -281,7 +282,7 @@ export class DutyPage implements OnInit, AfterViewInit {
 
     this.camera.getPicture(options).then(
       imagePath => {
-        console.log('TCL: ChangeAvatarPage -> takePicture -> imagePath', imagePath)
+        console.log('TCL: DutyPage -> takePicture -> imagePath', imagePath)
         const imageSrc = (window as any).Ionic.WebView.convertFileSrc(imagePath)
         console.log('TCL: DutyPage -> takePicture -> imageSrc', imageSrc)
 
@@ -300,7 +301,7 @@ export class DutyPage implements OnInit, AfterViewInit {
   }
 
   submit(item: CheckItem, subItem: CheckSubItem) {
-    console.log('TCL: DutyPage -> submit -> subItem', subItem)
+    console.log('TCL: DutyPage -> submit -> subItem submitxxxxxxxxxxxxxxxx', subItem)
     const data: DeductionPost = {
       autograph: '',
       checkSub: [
@@ -371,6 +372,7 @@ export class DutyPage implements OnInit, AfterViewInit {
           })
         }
       })
+      console.log('TCL: DutyPage -> loadCheckItems -> this.checkItems', this.checkItems)
     })
   }
 }

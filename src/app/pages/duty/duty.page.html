@@ -109,7 +109,11 @@
                     <!-- take pictures -->
                     <ion-col class="shrink">
                       <div>
-                        <ion-button class="operation-btn" color="light" (tap)="showActionSheet()">
+                        <ion-button
+                          class="operation-btn"
+                          color="light"
+                          (tap)="showActionSheet(subItem)"
+                        >
                           <ion-icon color="darkgrey" size="large" name="camera"></ion-icon>
                         </ion-button>
                       </div>
