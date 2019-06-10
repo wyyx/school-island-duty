@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { NavController } from '@ionic/angular'
-import { NgForm } from '@angular/forms'
+import { NgForm, FormGroup } from '@angular/forms'
 import { dbService } from 'src/app/storage/db.service'
 import { ToastService } from 'src/app/services/toast.service'
+import { markFormGroupAsTouched } from 'src/app/utils/form.util'
 
 @Component({
   selector: 'app-check-password',
@@ -23,16 +24,13 @@ export class CheckPasswordPage implements OnInit {
     this.navCtl.back()
   }
 
-  onSubmit(form: NgForm) {
-    console.log('TCL: CheckPasswordPage -> onSubmit -> form', form)
-    if (form.valid) {
-      console.log('TCL: CheckPasswordPage -> onSubmit -> form.valid', form.valid)
-      console.log('TCL: CheckPasswordPage -> onSubmit -> form.value.password', form.value.password)
+  onSubmit(form: FormGroup) {
+    markFormGroupAsTouched(form)
 
+    if (form.valid) {
       dbService
         .checkPassword(form.value.password)
         .then(() => {
-          console.log('xxxxxxxxxxxxxxxx')
           this.router.navigateByUrl('/check-device')
         })
         .catch(err => {

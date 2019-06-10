@@ -6,12 +6,15 @@ import { Platform } from '@ionic/angular'
 import { Storage } from '@ionic/storage'
 import { dbService } from './storage/db.service'
 import { AuthService } from './services/auth.service'
+import { School } from './models/duty-db.model'
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })
 export class AppComponent {
+  school = {} as School
+
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -24,12 +27,19 @@ export class AppComponent {
     dbService.initDb()
     dbService.synchronizationData()
     this.checkDeviceBinding()
+    this.getSchoolInfo()
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault()
       this.splashScreen.hide()
+    })
+  }
+
+  getSchoolInfo() {
+    dbService.getSchool().then(school => {
+      this.school = school
     })
   }
 

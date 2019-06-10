@@ -107,3 +107,8 @@ export interface AddressList {
   type: number
   media_address: string
 }
+
+export interface School {
+  school_id: number
+  school_name: string
+}

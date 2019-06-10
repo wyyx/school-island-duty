@@ -72,7 +72,7 @@ export class HistoryPage implements OnInit {
       if (this.needUpload) {
         this.upload()
       }
-    }, 1800000)
+    }, 3600000)
   }
 
   upload() {

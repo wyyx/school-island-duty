@@ -6,7 +6,8 @@ import {
   DeductionPost,
   DutyHistoryItem,
   Grade,
-  SubItemScoreHistory
+  SubItemScoreHistory,
+  School
 } from '../models/duty-db.model'
 
 const deviceCode = '1-002'
@@ -325,6 +326,22 @@ export class DbService {
             )
           }
         )
+      })
+    })
+  }
+
+  getSchool(): Promise<School> {
+    return new Promise((resolve, reject) => {
+      db.transaction(function(context) {
+        context.executeSql('SELECT school_id, school_name FROM school', [], function(tx, rs) {
+          const schoolRes = rs.rows
+          console.log("TCL: DbService -> synchronizationData -> schoolRes", schoolRes)
+
+          const school_id = schoolRes[0].school_id
+          const school_name = schoolRes[0].school_name
+
+          resolve({ school_id, school_name })
+        })
       })
     })
   }
