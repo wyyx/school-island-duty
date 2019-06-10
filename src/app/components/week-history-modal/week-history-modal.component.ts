@@ -3,6 +3,7 @@ import { ModalService } from 'src/app/services/modal.service'
 import { ModalController } from '@ionic/angular'
 import { SubItemScoreHistoryItem } from 'src/app/models/duty-db.model'
 import { slideScaleAnim } from 'src/app/animations/slide-scale.anim'
+import { dateUtil } from 'src/app/utils/date.util'
 
 @Component({
   selector: 'app-week-history-modal',
@@ -35,5 +36,13 @@ export class WeekHistoryModalComponent implements OnInit {
 
   tapSlideImg() {
     this.showImgViewer = false
+  }
+
+  getTime(date: string) {
+    return dateUtil.getTime(date)
+  }
+
+  getDate(date: string) {
+    return dateUtil.getDate(date)
   }
 }

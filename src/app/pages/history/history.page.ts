@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core'
 import * as moment from 'moment'
+import { BehaviorSubject } from 'rxjs'
+import { tap } from 'rxjs/operators'
 import { slideScaleAnim } from 'src/app/animations/slide-scale.anim'
 import { DutyHistoryItem } from 'src/app/models/duty-db.model'
 import { DutyService } from 'src/app/services/duty.service'
+import { LoadingService } from 'src/app/services/loading.service'
 import { dbService } from 'src/app/storage/db.service'
+import { dateUtil } from 'src/app/utils/date.util'
 // import { dbService } from 'src/app/mocks/db.mock.service'
 
 moment.locale('zh-CN')
@@ -25,12 +29,34 @@ export class HistoryPage implements OnInit {
   showImgViewer = false
   needUpload = false
 
-  constructor(private dutyService: DutyService) {}
+  isLoadingSubject$ = new BehaviorSubject<boolean>(false)
+  isLoading$ = this.isLoadingSubject$.asObservable()
+
+  constructor(private dutyService: DutyService, private loadingService: LoadingService) {}
 
   ngOnInit() {
+    this.showLoading()
     this.loadDutyHistoryList()
     this.upload()
     this.intervalUpload()
+  }
+
+  showLoading() {
+    const loadingPromise = this.loadingService.openLoading({
+      message: '正在加载数据...'
+    })
+
+    this.isLoading$
+      .pipe(
+        tap(isLoading => {
+          if (!isLoading) {
+            loadingPromise.then(loading => {
+              loading.dismiss()
+            })
+          }
+        })
+      )
+      .subscribe()
   }
 
   ionViewWillEnter() {
@@ -53,6 +79,8 @@ export class HistoryPage implements OnInit {
   }
 
   loadDutyHistoryList() {
+    this.isLoadingSubject$.next(true)
+
     dbService.historyList().then(res => {
       this.dutyHistoryList = res
 
@@ -61,15 +89,17 @@ export class HistoryPage implements OnInit {
           this.needUpload = true
         }
       })
+
+      this.isLoadingSubject$.next(false)
     })
   }
 
   getTime(date: string) {
-    return moment(date).format('H:mm')
+    return dateUtil.getTime(date)
   }
 
   getDate(date: string) {
-    return moment(date).format('YYYY.M.D')
+    return dateUtil.getDate(date)
   }
 
   openImgViewer(imgs: string[]) {

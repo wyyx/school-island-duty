@@ -1,8 +1,13 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
-import { AlertController, IonSelect, ActionSheetController } from '@ionic/angular'
+import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx'
+import { FilePath } from '@ionic-native/file-path/ngx'
+import { FileTransfer } from '@ionic-native/file-transfer/ngx'
+import { File } from '@ionic-native/file/ngx'
+import { ActionSheetController, AlertController, IonSelect } from '@ionic/angular'
 import { BehaviorSubject, from, Observable, of } from 'rxjs'
-import { switchMap, take } from 'rxjs/operators'
+import { switchMap, take, tap } from 'rxjs/operators'
 import { listAnim } from 'src/app/animations/list.anim'
+import { slideScaleAnim } from 'src/app/animations/slide-scale.anim'
 import { SelectScoreModalComponent } from 'src/app/components/select-score-modal/select-score-modal.component'
 import { WeekHistoryModalComponent } from 'src/app/components/week-history-modal/week-history-modal.component'
 // import { dbService } from 'src/app/mocks/db.mock.service'
@@ -14,21 +19,12 @@ import {
   Grade,
   SubItemScoreHistory
 } from 'src/app/models/duty-db.model'
+import { LoadingService } from 'src/app/services/loading.service'
 import { ModalService } from 'src/app/services/modal.service'
 import { PopoverService } from 'src/app/services/popover.service'
 import { ToastService } from 'src/app/services/toast.service'
 import { dbService } from 'src/app/storage/db.service'
 import { convertToArray } from 'src/app/utils/sql.util'
-import { slideScaleAnim } from 'src/app/animations/slide-scale.anim'
-import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/ngx'
-import { File } from '@ionic-native/file/ngx'
-import { FilePath } from '@ionic-native/file-path/ngx'
-import {
-  FileTransfer,
-  FileUploadOptions,
-  FileTransferObject
-} from '@ionic-native/file-transfer/ngx'
-import { LoadingService } from 'src/app/services/loading.service'
 
 const SIZE_PRE_SLIDE = 5
 
@@ -53,6 +49,9 @@ export class DutyPage implements OnInit, AfterViewInit {
 
   subItemScoreHistoryList$: Observable<SubItemScoreHistory[]>
   subItemScoreHistoryList: SubItemScoreHistory[] = []
+
+  isLoadingSubject$ = new BehaviorSubject<boolean>(false)
+  isLoading$ = this.isLoadingSubject$.asObservable()
 
   slideOpts = {
     initialSlide: 0,
@@ -88,6 +87,7 @@ export class DutyPage implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
+    this.showLoading()
     this.loadGrades()
     this.loadCheckItems()
 
@@ -101,6 +101,24 @@ export class DutyPage implements OnInit, AfterViewInit {
       this.subItemScoreHistoryList = list
       console.log(this.subItemScoreHistoryList)
     })
+  }
+
+  showLoading() {
+    const loadingPromise = this.loadingService.openLoading({
+      message: '正在加载数据...'
+    })
+
+    this.isLoading$
+      .pipe(
+        tap(isLoading => {
+          if (!isLoading) {
+            loadingPromise.then(loading => {
+              loading.dismiss()
+            })
+          }
+        })
+      )
+      .subscribe()
   }
 
   openImgViewer(imgs: string[]) {
@@ -154,9 +172,7 @@ export class DutyPage implements OnInit, AfterViewInit {
   }
 
   loadGrades() {
-    const loadingPromise = this.loadingService.openLoading({
-      message: '正在加载数据...'
-    })
+    this.isLoadingSubject$.next(true)
 
     dbService
       .gradeList()
@@ -173,9 +189,7 @@ export class DutyPage implements OnInit, AfterViewInit {
             })
         })
 
-        loadingPromise.then(loading => {
-          loading.dismiss()
-        })
+        this.isLoadingSubject$.next(false)
       })
   }
 
