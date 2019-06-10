@@ -290,7 +290,7 @@ export class DutyPage implements OnInit, AfterViewInit {
       err => {
         console.log('TCL: ChangeAvatarPage -> takePicture -> err', err)
         this.toastService.showToast({
-          message: '选择图片出现错误，请在 App 中操作或检查相关权限。',
+          message: '选择图片出现错误，请检查应用的相关权限。',
           duration: 3000,
           showCloseButton: true,
           closeButtonText: '关闭'
@@ -326,7 +326,7 @@ export class DutyPage implements OnInit, AfterViewInit {
       .saveScore(data)
       .then(() => {
         this.toastService.showToast({
-          message: '您已经成功提交本次值周记录！',
+          message: '提交成功!',
           showCloseButton: true,
           closeButtonText: '关闭',
           color: 'success',

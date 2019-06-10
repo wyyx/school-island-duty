@@ -4,7 +4,8 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx'
 import { StatusBar } from '@ionic-native/status-bar/ngx'
 import { Platform } from '@ionic/angular'
 import { Storage } from '@ionic/storage'
-import { DbService, dbService } from './storage/db.service'
+import { dbService } from './storage/db.service'
+import { AuthService } from './services/auth.service'
 
 @Component({
   selector: 'app-root',
@@ -16,10 +17,13 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private router: Router,
-    private storage: Storage
+    private storage: Storage,
+    private authService: AuthService
   ) {
     this.initializeApp()
     dbService.initDb()
+    dbService.synchronizationData()
+    this.checkDeviceBinding()
   }
 
   initializeApp() {
@@ -31,5 +35,21 @@ export class AppComponent {
 
   goToCheckPasswordPage() {
     this.router.navigateByUrl('/check-password')
+  }
+
+  goToBindDevicePage() {
+    this.router.navigateByUrl('/check-device')
+  }
+
+  checkDeviceBinding() {
+    dbService
+      .isBinding()
+      .then(() => {
+        console.log('设备已经绑定')
+        this.authService.isBindingSubject$.next(true)
+      })
+      .catch(() => {
+        this.goToBindDevicePage()
+      })
   }
 }

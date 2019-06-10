@@ -8,6 +8,7 @@ import { DutyService } from 'src/app/services/duty.service'
 import { LoadingService } from 'src/app/services/loading.service'
 import { dbService } from 'src/app/storage/db.service'
 import { dateUtil } from 'src/app/utils/date.util'
+import { ToastService } from 'src/app/services/toast.service'
 // import { dbService } from 'src/app/mocks/db.mock.service'
 
 moment.locale('zh-CN')
@@ -32,12 +33,15 @@ export class HistoryPage implements OnInit {
   isLoadingSubject$ = new BehaviorSubject<boolean>(false)
   isLoading$ = this.isLoadingSubject$.asObservable()
 
-  constructor(private dutyService: DutyService, private loadingService: LoadingService) {}
+  constructor(
+    private dutyService: DutyService,
+    private loadingService: LoadingService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit() {
     this.showLoading()
     this.loadDutyHistoryList()
-    this.upload()
     this.intervalUpload()
   }
 
@@ -74,6 +78,13 @@ export class HistoryPage implements OnInit {
   upload() {
     console.log('uploading')
     dbService.upload().then(() => {
+      this.toastService.showToast({
+        message: '上传成功!',
+        closeButtonText: '关闭',
+        showCloseButton: true,
+        duration: 2000,
+        color: 'success'
+      })
       this.loadDutyHistoryList()
     })
   }

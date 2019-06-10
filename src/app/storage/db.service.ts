@@ -1,15 +1,13 @@
 import * as $ from 'jquery'
 import {
-  Grade,
   AClass,
   CheckItem,
   CheckSubItem,
-  SubItemScoreHistoryItem,
   DeductionPost,
   DutyHistoryItem,
+  Grade,
   SubItemScoreHistory
 } from '../models/duty-db.model'
-import { environment } from 'src/environments/environment'
 
 const deviceCode = '1-002'
 const password = '579814'
@@ -21,11 +19,6 @@ declare let openDatabase: any
 export class DbService {
   initDb() {
     this.Onload()
-
-    console.log('TCL: DbService -> initDb -> environment.production', environment.production)
-    if (environment.production) {
-      this.resetDb()
-    }
 
     // this.resetDb()
   }
@@ -59,62 +52,90 @@ export class DbService {
    * password：密码
    * */
   binding(deviceCode, password) {
-    // 绑定设备
+    return new Promise((resolve, reject) => {
+      // 绑定设备
 
-    $.ajax({
-      type: 'POST',
-      url: `${IP}/w/pad/login`,
-      dataType: 'json',
-      async: false,
-      contentType: 'application/json;charset=UTF-8',
-      data: JSON.stringify({
-        deviceCode,
-        password
-      }),
-      success(data) {
-        if (data.content == true) {
-          db.transaction(
-            function(context) {
-              context.executeSql('DROP TABLE config')
+      $.ajax({
+        type: 'POST',
+        url: `${IP}/w/pad/login`,
+        dataType: 'json',
+        async: false,
+        contentType: 'application/json;charset=UTF-8',
+        data: JSON.stringify({
+          deviceCode,
+          password
+        }),
+        success(data) {
+          if (data.content == true) {
+            db.transaction(
+              function(context) {
+                /*初始化时把所有表创建出来*/
+                context.executeSql(
+                  'CREATE TABLE "school" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"school_id" INTEGER,"school_name" text(100));'
+                )
+                context.executeSql(
+                  'CREATE TABLE "class" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"class_id" INTEGER,"school_id" INTEGER,"grade" TEXT,"name" TEXT);'
+                )
+                context.executeSql(
+                  'CREATE TABLE "duty_check_item_config" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_check_item_config_id" INTEGER,"school_id" integer,"check_name" TEXT(50),"check_score" real(8,3),"description" TEXT,"create_time" TEXT,"update_time" TEXT,"deleted" integer DEFAULT 0);'
+                )
+                context.executeSql(
+                  'CREATE TABLE "duty_check_sub_item_config" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_check_sub_item_config_id" INTEGER,"school_id" INTEGER,"duty_check_item_config_id" INTEGER,"name" TEXT,"priority" integer,"description" TEXT,"score" real,"create_time" TEXT,"update_time" TEXT,"deleted" integer DEFAULT 0);'
+                )
+                context.executeSql(
+                  'CREATE TABLE "duty_score_history" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"uuid" text,"school_id" INTEGER,"class_id" INTEGER,"class_name" TEXT,"check_id" INTEGER,"check_name" TEXT,"check_sub_id" INTEGER,"check_sub_name" TEXT,"change_score" TEXT,"remarks" TEXT,"executor_id" integer,"executor_name" TEXT,"is_media" integer,"autograph" TEXT,"status" integer DEFAULT 0,"create_time" TEXT,"update_time" text,"deleted" integer DEFAULT 0);'
+                )
+                context.executeSql(
+                  'CREATE TABLE "duty_media" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_history_id" INTEGER,"type" integer,"media_address" TEXT,"create_time" TEXT,"update_time" text,"deleted" integer DEFAULT 0);'
+                )
 
-              /*初始化时把所有表创建出来*/
-              context.executeSql(
-                'CREATE TABLE "school" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"school_id" INTEGER,"school_name" text(100));'
-              )
-              context.executeSql(
-                'CREATE TABLE "class" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"class_id" INTEGER,"school_id" INTEGER,"grade" TEXT,"name" TEXT);'
-              )
-              context.executeSql(
-                'CREATE TABLE "duty_check_item_config" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_check_item_config_id" INTEGER,"school_id" integer,"check_name" TEXT(50),"check_score" real(8,3),"description" TEXT,"create_time" TEXT,"update_time" TEXT,"deleted" integer DEFAULT 0);'
-              )
-              context.executeSql(
-                'CREATE TABLE "duty_check_sub_item_config" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_check_sub_item_config_id" INTEGER,"school_id" INTEGER,"duty_check_item_config_id" INTEGER,"name" TEXT,"priority" integer,"description" TEXT,"score" real,"create_time" TEXT,"update_time" TEXT,"deleted" integer DEFAULT 0);'
-              )
-              context.executeSql(
-                'CREATE TABLE "duty_score_history" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"uuid" text,"school_id" INTEGER,"class_id" INTEGER,"class_name" TEXT,"check_id" INTEGER,"check_name" TEXT,"check_sub_id" INTEGER,"check_sub_name" TEXT,"change_score" TEXT,"remarks" TEXT,"executor_id" integer,"executor_name" TEXT,"is_media" integer,"autograph" TEXT,"status" integer DEFAULT 0,"create_time" TEXT,"update_time" text,"deleted" integer DEFAULT 0);'
-              )
-              context.executeSql(
-                'CREATE TABLE "duty_media" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_history_id" INTEGER,"type" integer,"media_address" TEXT,"create_time" TEXT,"update_time" text,"deleted" integer DEFAULT 0);'
-              )
-
-              context.executeSql(
-                'CREATE TABLE "config" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"key" text(50) NOT NULL,"val" TEXT(200) NOT NULL,"del" integer DEFAULT 0);'
-              )
-              context.executeSql(
-                `INSERT INTO config(key,val) VALUES("${deviceCode}","${password}")`
-              )
-            },
-            function(error) {
-              console.log('设备绑定失败:[' + error.message + ']')
-            },
-            function() {
-              console.log('设备绑定成功')
-            }
-          )
-        } else {
-          console.log('设备绑定失败')
+                context.executeSql(
+                  'CREATE TABLE "config" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"key" text(50) NOT NULL,"val" TEXT(200) NOT NULL,"del" integer DEFAULT 0);'
+                )
+                context.executeSql(
+                  `INSERT INTO config(key,val) VALUES("${deviceCode}","${password}")`
+                )
+              },
+              function(error) {
+                console.log('设备绑定失败:[' + error.message + ']')
+                reject()
+              },
+              function() {
+                console.log('设备绑定成功')
+                resolve()
+              }
+            )
+          } else {
+            console.log('设备绑定失败')
+            reject()
+          }
         }
-      }
+      })
+    })
+  }
+
+  isBinding(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        function(context) {
+          context.executeSql('SELECT key,val FROM config', [], function(tx, rs) {
+            const result = rs.rows
+            if (result.length == 0) {
+              console.log('设备未绑定')
+            } else {
+              console.log('设备已绑定')
+            }
+          })
+        },
+        function(error) {
+          console.log('chucuo')
+          reject(error)
+        },
+        function() {
+          console.log('success')
+          resolve()
+        }
+      )
     })
   }
 
@@ -304,6 +325,23 @@ export class DbService {
             )
           }
         )
+      })
+    })
+  }
+
+  checkPassword(password: string) {
+    return new Promise((resolve, reject) => {
+      db.transaction(function(context) {
+        context.executeSql('SELECT val FROM config WHERE val = ?', [password], function(tx, rs) {
+          const result = rs.rows
+          if (result.length == 0) {
+            console.log('密码错误')
+            reject()
+          } else {
+            console.log('密码正确')
+            resolve()
+          }
+        })
       })
     })
   }
@@ -1008,9 +1046,9 @@ export class DbService {
         context.executeSql('DROP TABLE class')
         context.executeSql('DROP TABLE config')
         context.executeSql('DROP TABLE duty_check_sub_item_config')
-        // context.executeSql('DROP TABLE duty_media')
+        context.executeSql('DROP TABLE duty_media')
         context.executeSql('DROP TABLE duty_check_item_config')
-        // context.executeSql('DROP TABLE duty_score_history')
+        context.executeSql('DROP TABLE duty_score_history')
         context.executeSql('DROP TABLE school')
       },
       function(error) {

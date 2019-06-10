@@ -20,31 +20,32 @@
           </ion-row>
 
           <ion-card-content class="ion-no-padding">
-            <form #form="ngForm" ngForm (ngSubmit)="onSumit(form)">
+            <form [formGroup]="form">
               <ion-item>
                 <ion-label position="floating">设备ID</ion-label>
-                <ion-input name="deviceId" #deviceId="ngModel" ngModel required></ion-input>
+                <ion-input formControlName="deviceId"></ion-input>
               </ion-item>
-              <ion-item lines="none" *ngIf="deviceId.invalid && deviceId.touched">
+              <!-- <ion-item lines="none" *ngIf="deviceId.invalid && deviceId.touched">
                 <ion-label color="danger">设备ID不能为空</ion-label>
-              </ion-item>
+              </ion-item> -->
 
               <ion-item>
                 <ion-label position="floating">设备密码</ion-label>
-                <ion-input
-                  name="devicePassword"
-                  #devicePassword="ngModel"
-                  ngModel
-                  required
-                ></ion-input>
+                <ion-input formControlName="devicePassword" type="password"></ion-input>
               </ion-item>
-              <ion-item lines="none" *ngIf="devicePassword.invalid && devicePassword.touched">
+              <!-- <ion-item lines="none" *ngIf="devicePassword.invalid && devicePassword.touched">
                 <ion-label color="danger">密码不能为空</ion-label>
-              </ion-item>
+              </ion-item> -->
               <div class="ion-text-center ion-padding-top">
                 <ion-row class="ion-justify-content-center ion-align-items-center">
                   <ion-col size="3">
-                    <ion-button class="confirm-btn" color="primary" size="medium" type="submit">
+                    <ion-button
+                      class="confirm-btn"
+                      color="primary"
+                      size="medium"
+                      type="button"
+                      (tap)="onSubmit()"
+                    >
                       确定
                     </ion-button>
                   </ion-col>
