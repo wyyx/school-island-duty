@@ -102,7 +102,7 @@
                           <ion-icon color="darkgrey" name="create" size="large"> </ion-icon>
                         </ion-button>
                       </div>
-                      <div class="text-center p-10">
+                      <div class="text-center p-10" *ngIf="subItem.scoreChange">
                         {{ subItem.scoreChange ? '-' + subItem.scoreChange : 0 }} 分
                       </div>
                     </ion-col>

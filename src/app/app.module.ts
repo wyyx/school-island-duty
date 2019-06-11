@@ -19,6 +19,7 @@ import { SelectDutyModalComponent } from './components/select-duty-modal/select-
 import { SelectGradePopoverComponent } from './components/select-grade-popover/select-grade-popover.component'
 import { SelectScoreModalComponent } from './components/select-score-modal/select-score-modal.component'
 import { WeekHistoryModalComponent } from './components/week-history-modal/week-history-modal.component'
+import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 
 export const BASE_URL = new InjectionToken<string>('App base url')
 
@@ -43,7 +44,9 @@ export const BASE_URL = new InjectionToken<string>('App base url')
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     StatusBar,

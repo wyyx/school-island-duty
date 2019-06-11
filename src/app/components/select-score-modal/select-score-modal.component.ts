@@ -21,6 +21,6 @@ export class SelectScoreModalComponent implements OnInit {
   }
 
   onScoreChange(event) {
-    this.sum = event
+    this.sum = event as number
   }
 }

@@ -1,5 +1,5 @@
 <div class="ion-padding">
-  <app-score-selector (change)="onScoreChange($event)"></app-score-selector>
+  <app-score-selector (scoreChange)="onScoreChange($event)"></app-score-selector>
   <ion-row class="actions  ion-padding-top ion-justify-content-center ion-align-items-center">
     <ion-col size="3" class="ion-padding-end">
       <ion-button expand="block" color="light" (tap)="cancel()">

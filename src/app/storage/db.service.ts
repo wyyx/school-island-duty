@@ -58,7 +58,7 @@ export class DbService {
 
       $.ajax({
         type: 'POST',
-        url: `${IP}/w/pad/login`,
+        url: `${IP}/p/pad/login`,
         dataType: 'json',
         async: false,
         contentType: 'application/json;charset=UTF-8',
@@ -303,7 +303,7 @@ export class DbService {
 
                 $.ajax({
                   type: 'POST',
-                  url: `${IP}/w/score/add`,
+                  url: `${IP}/p/score/add`,
                   dataType: 'json',
                   async: false,
                   contentType: 'application/json; charset=utf-8',
@@ -335,7 +335,7 @@ export class DbService {
       db.transaction(function(context) {
         context.executeSql('SELECT school_id, school_name FROM school', [], function(tx, rs) {
           const schoolRes = rs.rows
-          console.log("TCL: DbService -> synchronizationData -> schoolRes", schoolRes)
+          console.log('TCL: DbService -> synchronizationData -> schoolRes', schoolRes)
 
           const school_id = schoolRes[0].school_id
           const school_name = schoolRes[0].school_name
@@ -915,7 +915,7 @@ export class DbService {
 
                 $.ajax({
                   type: 'POST',
-                  url: `${IP}/w/pad/init-data/w/score/test`,
+                  url: `${IP}/w/pad/init-data/p/score/test`,
                   dataType: 'json',
                   async: false,
                   contentType: 'application/json; charset=utf-8',
@@ -941,7 +941,7 @@ export class DbService {
       function(context) {
         $.ajax({
           type: 'POST',
-          url: `${IP}/w/pad/test`,
+          url: `${IP}/p/pad/test`,
           dataType: 'json',
           async: false,
           contentType: 'application/json;charset=UTF-8',

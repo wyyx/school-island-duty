@@ -9,13 +9,13 @@ ion-fab-button {
 }
 
 .sum {
-  width: 64px;
   font-size: 1.5rem;
   white-space: nowrap;
 }
 
 .unit {
   font-size: 1rem;
+  line-height: 3rem;
 }
 
 ion-row {
@@ -24,4 +24,10 @@ ion-row {
 
 .math-sign {
   font-size: 1.5rem;
+}
+
+.score-input {
+  width: 96px !important;
+  border: 1px solid var(--ion-color-medium) !important;
+  border-radius: 4px !important;
 }

@@ -233,7 +233,9 @@ export class DutyPage implements OnInit, AfterViewInit {
         return res.onDidDismiss()
       })
       .then(detail => {
+        console.log('TCL: DutyPage -> openSelectScorePopover -> detail', detail)
         const score = detail.data
+        console.log('TCL: DutyPage -> openSelectScorePopover -> score', score)
 
         // modify score
         if (score && score !== 0) {
