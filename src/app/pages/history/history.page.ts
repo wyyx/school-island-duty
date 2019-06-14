@@ -77,16 +77,28 @@ export class HistoryPage implements OnInit {
 
   upload() {
     console.log('uploading')
-    dbService.upload().then(() => {
-      this.toastService.showToast({
-        message: '上传成功!',
-        closeButtonText: '关闭',
-        showCloseButton: true,
-        duration: 2000,
-        color: 'success'
+    dbService
+      .upload()
+      .then(() => {
+        this.toastService.showToast({
+          message: '上传成功!',
+          closeButtonText: '关闭',
+          showCloseButton: true,
+          duration: 2000,
+          color: 'success'
+        })
+
+        this.loadDutyHistoryList()
       })
-      this.loadDutyHistoryList()
-    })
+      .catch(error => {
+        this.toastService.showToast({
+          message: '上传失败!',
+          closeButtonText: '关闭',
+          showCloseButton: true,
+          duration: 2000,
+          color: 'danger'
+        })
+      })
   }
 
   loadDutyHistoryList() {

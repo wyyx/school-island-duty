@@ -12,7 +12,9 @@ export class DutyService {
     'Content-Type': 'application/json'
   })
 
-  constructor(@Inject(BASE_URL) private baseUrl: string, private http: HttpClient) {}
+  constructor(@Inject(BASE_URL) private baseUrl: string, private http: HttpClient) {
+    console.log('TCL: DutyService -> constructor -> baseUrl', baseUrl)
+  }
 
   add(duties: NewDuty[]): Observable<AddDutyResponse> {
     const url = `${this.baseUrl}/w/score/add`

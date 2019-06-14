@@ -9,10 +9,12 @@ import {
   SubItemScoreHistory,
   School
 } from '../models/duty-db.model'
+import { ResolveEnd } from '@angular/router'
 
 const deviceCode = '1-002'
 const password = '579814'
 const IP = 'http://192.168.1.10:8888'
+// const IP = 'http://xyd.husiwei.com'
 
 let db
 declare let openDatabase: any
@@ -129,7 +131,7 @@ export class DbService {
           })
         },
         function(error) {
-          console.log('chucuo')
+          console.log('error')
           reject(error)
         },
         function() {
@@ -158,7 +160,7 @@ export class DbService {
 
             $.ajax({
               type: 'POST',
-              url: `${IP}/w/pad/init-data`,
+              url: `${IP}/p/pad/init-data`,
               dataType: 'json',
               async: false,
               contentType: 'application/json;charset=UTF-8',
@@ -203,7 +205,6 @@ export class DbService {
                     const sql = `INSERT INTO class(class_id,school_id,grade,name) VALUES(${
                       classes[i].id
                     },${classes[i].schoolId},"${classes[i].grade}","${classes[i].name}")`
-                    console.log(sql)
                     context.executeSql(sql)
                   }
                 }
@@ -217,7 +218,7 @@ export class DbService {
                     },${checkItems[i].schoolId},"${checkItems[i].checkName}",${
                       checkItems[i].checkScore
                     },"${checkItems[i].description}","${date}","${date}")`
-                    console.log(sql)
+
                     context.executeSql(sql)
                   }
                 }
@@ -232,7 +233,7 @@ export class DbService {
                     }",${subCheckItems[i].priority},"${subCheckItems[i].description}",${
                       subCheckItems[i].score
                     },"${date}","${date}")`
-                    console.log(sql)
+
                     context.executeSql(sql)
                   }
                 }
@@ -286,6 +287,7 @@ export class DbService {
                   }
                   /*最终返回的实体*/
                   const historyVo = {
+                    shamId: historys[i].id,
                     uuid: historys[i].uuid.split('.')[0],
                     schoolId: historys[i].school_id,
                     classId: historys[i].class_id,
@@ -309,16 +311,21 @@ export class DbService {
                   contentType: 'application/json; charset=utf-8',
                   data: JSON.stringify(historyVoArr),
                   success(data) {
-                    if (data.content == true) {
+                    console.log('TCL: DbService -> success -> data.content', data.content)
+                    const shamIds = data.content
+                    if (shamIds != null) {
+                      const idStr = shamIds.join(',')
                       context.executeSql(
-                        'UPDATE duty_score_history SET status = 1 WHERE id IN (SELECT id FROM duty_score_history WHERE status = 0 AND create_time > ?)',
-                        [times]
+                        'UPDATE duty_score_history SET status = 1 WHERE id IN (' + idStr + ')'
                       )
+                      console.log('执行成功')
+                      resolve()
                     }
-                    console.log('执行成功')
-                    resolve()
                   },
                   error() {
+                    console.log('TCL: DbService -> upload -> error')
+
+                    reject()
                     console.log('失败')
                   }
                 })
@@ -400,7 +407,7 @@ export class DbService {
    * 根据年级查询班级
    * @param grade 年级名称，如：2014级
    */
-  classesList(grade): Promise<{ [key: number]: AClass }> {
+  classesList(grade): Promise<AClass[]> {
     return new Promise((resolve, reject) => {
       db.transaction(
         function(context) {
@@ -408,11 +415,22 @@ export class DbService {
             'SELECT class_id,grade,name FROM class where grade = ?',
             [grade],
             function(tx, rs) {
-              const classes = rs.rows
+              const results = rs.rows
 
-              if (classes == null) {
+              if (results == null) {
                 return
               }
+
+              let classes = []
+
+              for (let i = 0; i < results.length; i++) {
+                classes.push(results[i])
+              }
+              classes = classes.sort(sortClass)
+              console.log(
+                'TCL: DbService -> synchronizationData -> classes aaaaaaaaaaaaaaaaaaaaaaaaaaa',
+                classes
+              )
 
               resolve(classes)
             }
@@ -915,7 +933,7 @@ export class DbService {
 
                 $.ajax({
                   type: 'POST',
-                  url: `${IP}/w/pad/init-data/p/score/test`,
+                  url: `${IP}/p/pad/init-data/p/score/test`,
                   dataType: 'json',
                   async: false,
                   contentType: 'application/json; charset=utf-8',
@@ -987,7 +1005,7 @@ export class DbService {
                 const sql = `INSERT INTO class(class_id,school_id,grade,name) VALUES(${
                   classes[i].id
                 },${classes[i].schoolId},"${classes[i].grade}","${classes[i].name}")`
-                console.log(sql)
+
                 context.executeSql(sql)
               }
             }
@@ -1001,7 +1019,7 @@ export class DbService {
                 },${checkItems[i].schoolId},"${checkItems[i].checkName}",${
                   checkItems[i].checkScore
                 },"${checkItems[i].description}","${date}","${date}")`
-                console.log(sql)
+
                 context.executeSql(sql)
               }
             }
@@ -1016,7 +1034,7 @@ export class DbService {
                 }",${subCheckItems[i].priority},"${subCheckItems[i].description}",${
                   subCheckItems[i].score
                 },"${date}","${date}")`
-                console.log(sql)
+
                 context.executeSql(sql)
               }
             }
@@ -1029,7 +1047,7 @@ export class DbService {
                 }",${h[i].schoolId},${h[i].classId},${h[i].checkId},"${h[i].checkName}",${
                   h[i].checkSubId
                 },"${h[i].checkSubName}",${h[i].changeScore},1,0,"${h[i].createTime}")`
-                console.log(sql)
+
                 context.executeSql(sql)
               }
             }
@@ -1040,7 +1058,7 @@ export class DbService {
                 const sql = `INSERT INTO duty_media(duty_history_id,type,media_address,create_time) VALUES(${
                   m[i].dutyHistoryId
                 },1,"${m[i].mediaAddress}","${m[i].createTime}")`
-                console.log(sql)
+
                 context.executeSql(sql)
               }
             }
@@ -1218,4 +1236,12 @@ function toDayTime(time) {
   return year + '-' + month + '-' + date
 }
 
+function sortClass(a, b) {
+  const aClass = a.name
+  const bClass = b.name
+  const aName = aClass.substring(0, aClass.length - 1)
+  const bName = bClass.substring(0, bClass.length - 1)
+
+  return aName - bName
+}
 export const dbService = new DbService()

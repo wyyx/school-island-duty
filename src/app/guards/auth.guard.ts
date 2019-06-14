@@ -8,7 +8,7 @@ export class AuthGuard implements CanActivate {
   constructor(private router: Router, private authService: AuthService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    console.log('yyyyyyyyyyy')
+    console.log('AuthGuard')
     return this.authService.isBinding$.pipe(
       tap(isBinding => {
         if (!isBinding) {
@@ -16,5 +16,7 @@ export class AuthGuard implements CanActivate {
         }
       })
     )
+
+    // return true
   }
 }

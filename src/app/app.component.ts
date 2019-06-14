@@ -4,9 +4,9 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx'
 import { StatusBar } from '@ionic-native/status-bar/ngx'
 import { Platform } from '@ionic/angular'
 import { Storage } from '@ionic/storage'
-import { dbService } from './storage/db.service'
-import { AuthService } from './services/auth.service'
 import { School } from './models/duty-db.model'
+import { AuthService } from './services/auth.service'
+import { dbService } from './storage/db.service'
 
 @Component({
   selector: 'app-root',
@@ -55,10 +55,11 @@ export class AppComponent {
     dbService
       .isBinding()
       .then(() => {
-        console.log('设备已经绑定')
+        console.log('设备已绑定')
         this.authService.isBindingSubject$.next(true)
       })
       .catch(() => {
+        console.log('未绑定，跳转到绑定页面')
         this.goToBindDevicePage()
       })
   }

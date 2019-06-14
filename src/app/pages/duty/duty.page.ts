@@ -172,18 +172,28 @@ export class DutyPage implements OnInit, AfterViewInit {
   }
 
   loadGrades() {
+    console.log('loadGrades() xxxxxxxxxxxxxxxxxxx')
     this.isLoadingSubject$.next(true)
 
     dbService
       .gradeList()
       .then(convertToArray)
       .then(gradeList => {
+        console.log('TCL: DutyPage -> loadGrades -> gradeList yyyyyyyyyyyyyyyyyyyyyy', gradeList)
         gradeList.forEach(grade => {
           dbService
             .classesList(grade.grade)
             .then(convertToArray)
             .then(classList => {
+              console.log(
+                'TCL: DutyPage -> loadGrades -> classList zzzzzzzzzzzzzzzzzzzzzzzzzzzzz',
+                classList
+              )
               this.grades.push({ ...grade, classList })
+              console.log(
+                'TCL: DutyPage -> loadGrades -> this.grades 0000000000000000000000000000',
+                this.grades
+              )
 
               this.setInitData()
             })
@@ -342,7 +352,7 @@ export class DutyPage implements OnInit, AfterViewInit {
       })
       .catch(error => {
         this.toastService.showToast({
-          message: '提交失败！出现意外错误，请稍后再试.',
+          message: '扣分失败！本周扣分超出限制。',
           showCloseButton: true,
           closeButtonText: '关闭',
           color: 'danger',
