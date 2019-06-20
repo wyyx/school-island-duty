@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   hmr: false,
-  base_url: 'http://192.168.1.10:8888'
+  base_url: '/api'
 }
 
 /*

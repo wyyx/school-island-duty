@@ -2,6 +2,10 @@
   "/api": {
     "target": "http://xyd.husiwei.com",
     "secure": false,
-    "logLevel": "debug"
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": ""
+    }
   }
 }
