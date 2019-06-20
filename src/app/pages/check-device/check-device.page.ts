@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service'
 import { ToastService } from 'src/app/services/toast.service'
 import { dbService } from 'src/app/storage/db.service'
 import { AlertService } from 'src/app/services/alert.service'
+import { LoadingService } from 'src/app/services/loading.service'
 
 @Component({
   selector: 'app-check-device',
@@ -18,7 +19,8 @@ export class CheckDevicePage implements OnInit {
     private toastService: ToastService,
     private authService: AuthService,
     private fb: FormBuilder,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private loadingService: LoadingService
   ) {}
 
   ngOnInit() {
@@ -42,6 +44,7 @@ export class CheckDevicePage implements OnInit {
         .isBinding()
         // rebinding
         .then(() => {
+          console.log('rebinding')
           this.alertService.showAlert({
             message: '重新绑定会删除当前设备上的所有数据，您确定要继续吗？',
             buttons: [
@@ -69,17 +72,35 @@ export class CheckDevicePage implements OnInit {
   }
 
   bindDevice() {
+    const loadingRef = this.loadingService.openLoading({
+      message: '正在绑定...'
+    })
+
     dbService
       .binding(this.form.value.deviceId, this.form.value.devicePassword)
       .then(() => {
         this.authService.isBindingSubject$.next(true)
         dbService.synchronizationData()
+
+        loadingRef.then(loading => {
+          loading.dismiss()
+        })
+
         this.goToDutyPage()
       })
       .catch(err => {
+        loadingRef.then(loading => {
+          loading.dismiss()
+        })
+
         this.toastService.showToast({
           message: '绑定失败，请检查设备ID和密码！',
           color: 'danger'
+        })
+      })
+      .finally(() => {
+        loadingRef.then(loading => {
+          loading.dismiss()
         })
       })
   }

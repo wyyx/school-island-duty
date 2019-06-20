@@ -3,7 +3,7 @@ import { Camera, CameraOptions, PictureSourceType } from '@ionic-native/camera/n
 import { FilePath } from '@ionic-native/file-path/ngx'
 import { FileTransfer } from '@ionic-native/file-transfer/ngx'
 import { File } from '@ionic-native/file/ngx'
-import { ActionSheetController, AlertController, IonSelect } from '@ionic/angular'
+import { ActionSheetController, AlertController, IonSelect, IonSlides } from '@ionic/angular'
 import { BehaviorSubject, from, Observable, of } from 'rxjs'
 import { switchMap, take, tap } from 'rxjs/operators'
 import { listAnim } from 'src/app/animations/list.anim'
@@ -38,12 +38,14 @@ declare var cordova: any
 })
 export class DutyPage implements OnInit, AfterViewInit {
   @ViewChild('gradeSelect') gradeSelect: IonSelect
+  @ViewChild('slides') slides: IonSlides
 
   grades: Grade[] = []
   currentGrade: Grade = {} as Grade
   currentClass: AClass = {} as AClass
 
   checkItems: CheckItem[] = []
+  currentItem = {} as CheckItem
   currentClassSubject$ = new BehaviorSubject<AClass>(null)
   currentClass$ = this.currentClassSubject$.asObservable()
 
@@ -55,13 +57,13 @@ export class DutyPage implements OnInit, AfterViewInit {
 
   slideOpts = {
     initialSlide: 0,
-    speed: 400,
+    speed: 200,
     autoHeight: true
   }
 
   imageViewerslideOpts = {
     initialSlide: 0,
-    speed: 400
+    speed: 200
   }
 
   slideImgs: string[] = []
@@ -100,6 +102,13 @@ export class DutyPage implements OnInit, AfterViewInit {
     this.subItemScoreHistoryList$.subscribe(list => {
       this.subItemScoreHistoryList = list
       console.log(this.subItemScoreHistoryList)
+    })
+  }
+
+  onSlideChange() {
+    this.slides.getActiveIndex().then(index => {
+      this.currentItem = this.checkItems[index]
+      console.log('TCL: DutyPage -> onSlideChange ->  this.currentItem ', this.currentItem)
     })
   }
 
@@ -385,6 +394,8 @@ export class DutyPage implements OnInit, AfterViewInit {
         }
       })
       console.log('TCL: DutyPage -> loadCheckItems -> this.checkItems', this.checkItems)
+
+      this.currentItem = this.checkItems[0] || ({} as CheckItem)
     })
   }
 }

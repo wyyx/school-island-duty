@@ -30,12 +30,24 @@
 
 .duty-slides .swiper-pagination {
   position: fixed;
+  width: 200px;
   top: 0px !important;
+  right: 0px !important;
   bottom: unset !important;
-  z-index: 3000;
   padding: 10px !important;
+  z-index: 3000;
+  display: none;
 }
 
 .ion-invalid.ion-touched ion-label {
   color: var(--ion-color-danger) !important;
+}
+
+ion-list.list-md {
+  padding: 0px;
+}
+
+ion-content.duty-page {
+  --overflow: unset !important;
+  overflow-y: unset;
 }

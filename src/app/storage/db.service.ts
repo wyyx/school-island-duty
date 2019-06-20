@@ -14,8 +14,10 @@ import { ResolveEnd } from '@angular/router'
 const deviceCode = '1-002'
 const password = '579814'
 // const IP = 'http://192.168.1.10:8888'
-// const IP = 'http://xyd.husiwei.com'
-const IP = '/api'
+const IP = 'http://xyd.husiwei.com'
+//
+// change when build
+// const IP = '/api'
 
 let db
 declare let openDatabase: any

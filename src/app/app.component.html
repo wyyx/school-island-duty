@@ -1,18 +1,20 @@
 <ion-app>
-  <ion-header *ngIf="authService.isBinding$ | async">
-    <ion-toolbar>
-      <ion-row>
-        <ion-col class="grow title-wrapper">
-          <ion-title>{{ school.school_name }}</ion-title>
-        </ion-col>
-        <ion-col class="shrink ion-padding-end setting-btn-wrapper">
-          <ion-fab-button (tap)="goToCheckPasswordPage()" class="setting-btn" color="transparent">
-            <ion-icon size="large" name="settings"> </ion-icon>
-          </ion-fab-button>
-        </ion-col>
-      </ion-row>
-    </ion-toolbar>
-  </ion-header>
+  <div *ngIf="authService.isBinding$ | async">
+    <!-- <ion-toolbar> -->
+    <ion-row class="top-header ion-padding">
+      <ion-col class="grow title-wrapper ion-no-padding">
+        <ion-text class="pl-10" color="medium">
+          {{ school.school_name }}
+        </ion-text>
+      </ion-col>
+      <ion-col class="shrink setting-btn-wrapper ion-no-padding">
+        <ion-fab-button (tap)="goToCheckPasswordPage()" class="setting-btn" color="transparent">
+          <ion-icon size="medium" name="settings" color="medium"> </ion-icon>
+        </ion-fab-button>
+      </ion-col>
+    </ion-row>
+    <!-- </ion-toolbar> -->
+  </div>
   <ion-content>
     <ion-router-outlet></ion-router-outlet>
   </ion-content>

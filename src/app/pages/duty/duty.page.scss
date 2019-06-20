@@ -1,6 +1,7 @@
 .container {
   --ion-grid-padding: 0;
   height: 100%;
+  width: 100%;
 }
 
 .wrapper {
@@ -120,3 +121,19 @@ ion-slides ion-card {
   top: 0px;
   z-index: 5000;
 }
+
+.current-class {
+  padding-right: 50px;
+}
+
+.current-item-name {
+  padding-left: 50px;
+}
+
+.header-wrapper {
+  text-align: center;
+}
+
+// ion-content {
+//   --overflow: unset;
+// }
