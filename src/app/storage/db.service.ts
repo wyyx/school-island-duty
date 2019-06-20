@@ -78,7 +78,7 @@ export class DbService {
                   'CREATE TABLE "school" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"school_id" INTEGER,"school_name" text(100));'
                 )
                 context.executeSql(
-                  'CREATE TABLE "class" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"class_id" INTEGER,"school_id" INTEGER,"grade" TEXT,"name" TEXT);'
+                  'CREATE TABLE "class" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"class_id" INTEGER,"school_id" INTEGER,"grade" TEXT,"name" TEXT,"priority" INTEGER);'
                 )
                 context.executeSql(
                   'CREATE TABLE "duty_check_item_config" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_check_item_config_id" INTEGER,"school_id" integer,"check_name" TEXT(50),"check_score" real(8,3),"description" TEXT,"create_time" TEXT,"update_time" TEXT,"deleted" integer DEFAULT 0);'
@@ -175,16 +175,16 @@ export class DbService {
                 /*修改pad密码，修改学校id和学校名字*/
                 context.executeSql(`UPDATE config SET val="${data.content.padPassword}"`)
 
-                context.executeSql('DROP TABLE school')
-                context.executeSql('DROP TABLE class')
-                context.executeSql('DROP TABLE duty_check_item_config')
-                context.executeSql('DROP TABLE duty_check_sub_item_config')
+                context.executeSql('DROP TABLE IF EXISTS school')
+                context.executeSql('DROP TABLE IF EXISTS class')
+                context.executeSql('DROP TABLE IF EXISTS duty_check_item_config')
+                context.executeSql('DROP TABLE IF EXISTS duty_check_sub_item_config')
 
                 context.executeSql(
                   'CREATE TABLE "school" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"school_id" INTEGER,"school_name" text(100));'
                 )
                 context.executeSql(
-                  'CREATE TABLE "class" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"class_id" INTEGER,"school_id" INTEGER,"grade" TEXT,"name" TEXT);'
+                  'CREATE TABLE "class" ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"class_id" INTEGER,"school_id" INTEGER,"grade" TEXT,"name" TEXT,"priority" INTEGER);'
                 )
                 context.executeSql(
                   'CREATE TABLE "duty_check_item_config" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,"duty_check_item_config_id" integer,"school_id" integer,"check_name" TEXT(50),"check_score" real(8,3),"description" TEXT,"create_time" TEXT,"update_time" TEXT,"deleted" integer DEFAULT 0);'
@@ -203,9 +203,11 @@ export class DbService {
                 const classes = data.content.classes
                 if (classes != null) {
                   for (let i = 0; i < classes.length; i++) {
-                    const sql = `INSERT INTO class(class_id,school_id,grade,name) VALUES(${
+                    const sql = `INSERT INTO class(class_id,school_id,grade,name,priority) VALUES(${
                       classes[i].id
-                    },${classes[i].schoolId},"${classes[i].grade}","${classes[i].name}")`
+                    },${classes[i].schoolId},"${classes[i].grade}","${classes[i].name}",${
+                      classes[i].priority
+                    })`
                     context.executeSql(sql)
                   }
                 }
@@ -380,18 +382,19 @@ export class DbService {
     return new Promise((resolve, reject) => {
       db.transaction(
         function(context) {
-          context.executeSql('SELECT grade FROM class group by grade order by grade', [], function(
-            tx,
-            rs
-          ) {
-            const grade = rs.rows
+          context.executeSql(
+            'SELECT grade FROM class group by grade order by priority',
+            [],
+            function(tx, rs) {
+              const grade = rs.rows
 
-            if (grade == null) {
-              return
+              if (grade == null) {
+                return
+              }
+
+              resolve(grade)
             }
-
-            resolve(grade)
-          })
+          )
         },
         function(error) {
           console.log('查询好多级列表失败:[' + error.message + ']')
@@ -542,7 +545,7 @@ export class DbService {
         function(context) {
           /*根据大项查子项*/
           context.executeSql(
-            'SELECT * FROM duty_check_sub_item_config WHERE duty_check_item_config_id=? ORDER BY priority',
+            'SELECT * FROM duty_check_sub_item_config WHERE duty_check_item_config_id=? ORDER BY duty_check_sub_item_config_id DESC',
             [itemId],
             function(tx, rs) {
               const subItems: {
@@ -1140,7 +1143,7 @@ export class DbService {
 
                     let k = 0
                     for (let i = 0; i < checkSub.length; i++) {
-                      const uuid = new Date().getTime()
+                      const uuid = new Date().getTime() + Math.floor(Math.random() * 10)
 
                       /*添加历史数据*/
                       context.executeSql(
