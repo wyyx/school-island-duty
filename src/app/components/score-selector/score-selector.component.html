@@ -3,13 +3,23 @@
   <ion-col>
     <ion-grid class="num-pad">
       <ion-row class="ion-no-wrap" *ngFor="let outterItem of integerNums">
-        <ion-col *ngFor="let innerItem of outterItem">
-          <ion-fab-button
-            [color]="getIfIntegerSelected(innerItem) ? 'primary' : 'transparent'"
-            (tap)="setIntegerPart(innerItem)"
-          >
-            {{ innerItem }}
-          </ion-fab-button>
+        <ion-col *ngFor="let innerItem of outterItem" size-xs="12" size-sm="4" size-md="3">
+          <ng-container *ngIf="innerItem % 2 === 0; else elseTemplate">
+            <ion-fab-button
+              [color]="getIfIntegerSelected(innerItem) ? 'primary' : 'transparent'"
+              (tap)="setIntegerPart(innerItem)"
+            >
+              <strong> {{ innerItem }} </strong>
+            </ion-fab-button>
+          </ng-container>
+          <ng-template #elseTemplate>
+            <ion-fab-button
+              [color]="getIfIntegerSelected(innerItem) ? 'primary' : 'transparent'"
+              (tap)="setIntegerPart(innerItem)"
+            >
+              {{ innerItem }}
+            </ion-fab-button>
+          </ng-template>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -26,13 +36,23 @@
   <ion-col>
     <ion-grid class="num-pad">
       <ion-row class="ion-no-wrap" *ngFor="let outterItem of decimalNums">
-        <ion-col *ngFor="let innerItem of outterItem">
-          <ion-fab-button
-            [color]="getIfDecimalSelected(innerItem) ? 'primary' : 'transparent'"
-            (tap)="setDecimalPart(innerItem)"
-          >
-            {{ innerItem }}
-          </ion-fab-button>
+        <ion-col *ngFor="let innerItem of outterItem" size-xs="12" size-sm="4" size-md="3">
+          <ng-container *ngIf="(innerItem * 10) % 2 === 0; else elseTemplate">
+            <ion-fab-button
+              [color]="getIfDecimalSelected(innerItem) ? 'primary' : 'transparent'"
+              (tap)="setDecimalPart(innerItem)"
+            >
+              <strong> {{ innerItem }} </strong>
+            </ion-fab-button>
+          </ng-container>
+          <ng-template #elseTemplate>
+            <ion-fab-button
+              [color]="getIfDecimalSelected(innerItem) ? 'primary' : 'transparent'"
+              (tap)="setDecimalPart(innerItem)"
+            >
+              {{ innerItem }}
+            </ion-fab-button>
+          </ng-template>
         </ion-col>
       </ion-row>
     </ion-grid>

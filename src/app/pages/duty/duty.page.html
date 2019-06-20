@@ -76,14 +76,17 @@
                   <div class="head-text">快照</div>
                 </ion-col>
               </ion-row>
-              <ion-row *ngFor="let subItem of item.checkSubItems" class="ion-padding-top">
+              <ion-row
+                *ngFor="let subItem of item.checkSubItems; let subItemIndex = index"
+                class="ion-padding-top"
+              >
                 <!-- deduction card -->
                 <ion-card class="card ion-padding">
                   <!-- card content -->
                   <ion-row class="ion-wrap">
                     <!-- index -->
                     <ion-col class="target-col shrink">
-                      <div class="label">{{ subItem.duty_check_sub_item_config_id }}</div>
+                      <div class="label">{{ subItemIndex + 1 }}</div>
                     </ion-col>
                     <!-- standard -->
                     <ion-col class="grow standard-col">
@@ -199,7 +202,7 @@
     </ion-row>
   </ion-grid>
   <div class="sliders-wrapper" *ngIf="showImgViewer" @slideScaleAnim>
-    <ion-slides class="sliders" pager="true" [options]="slideOpts">
+    <ion-slides class="sliders" pager="true" [options]="imageViewerslideOpts">
       <ion-slide *ngFor="let img of slideImgs" (tap)="tapSlideImg()">
         <img [src]="img" class="slide-img" />
       </ion-slide>
